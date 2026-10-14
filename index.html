@@ -188,7 +188,7 @@
           <div class="pub-award">Autoregressive video generation with decoupled context-writing and denoising parameters, enabling up to 24-hour generation from 5s training windows.</div>
           <div class="pub-links">
             <a class="pub-link" href="https://arxiv.org/abs/2610.10429" target="_blank" rel="noopener">Paper</a>
-            <a class="pub-link" href="https://github.com/Zihan-Su/Self_Gradient_Forcing_Plus" target="_blank" rel="noopener" data-github-stars="Zihan-Su/Self_Gradient_Forcing_Plus">GitHub <span style="font-family: Arial, sans-serif; font-size: .85em; line-height: 1; margin: 0 5px" aria-hidden="true">⭐</span><span class="star-count">168</span></a>
+            <a class="pub-link" href="https://github.com/Zihan-Su/Self_Gradient_Forcing_Plus" target="_blank" rel="noopener" data-github-stars="Zihan-Su/Self_Gradient_Forcing_Plus">GitHub <span style="font-family: Arial, sans-serif; font-size: .85em; line-height: 1; margin: 0 5px" aria-hidden="true">⭐</span><span class="star-count">171</span></a>
             <a class="pub-link" href="https://zihan-su.github.io/self-gradient-forcing-plus/" target="_blank" rel="noopener">Project Page</a>
             <a class="pub-link" href="https://zihan-su.github.io/blog/sgf-plus/en.html" target="_blank" rel="noopener">Blog</a>
           </div>
@@ -464,10 +464,11 @@
       // reports failures as HTTP 200 with a message like "repo not found".
       const isCount = value => typeof value === 'string' && /^\d+(\.\d+)?k?$/.test(value);
       try {
-        const cached = localStorage.getItem(cacheKey);
-        if (isCount(cached)) showCount(cached);
+        // Expire a stored count after a day, so a long outage cannot freeze it.
+        const { count, time } = JSON.parse(localStorage.getItem(cacheKey));
+        if (isCount(count) && Date.now() - time < 86400000) showCount(count);
       } catch (_) {
-        // Storage may be unavailable; still request the current count.
+        // Storage may be unavailable or empty; still request the current count.
       }
 
       for (let attempt = 0; attempt < 3; attempt++) {
@@ -475,7 +476,11 @@
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 8000);
         try {
-          const response = await fetch(`https://img.shields.io/github/stars/${repo}.json`, {
+          // Shields.io serves each URL from a 30-minute Cloudflare edge cache
+          // that `cache: 'no-cache'` cannot reach past, so vary the URL by the
+          // minute to keep the count from trailing that far behind.
+          const url = `https://img.shields.io/github/stars/${repo}.json?_=${Math.floor(Date.now() / 60000)}`;
+          const response = await fetch(url, {
             cache: 'no-cache',
             signal: controller.signal
           });
@@ -484,7 +489,7 @@
           if (!isCount(count)) throw new Error(`Invalid star count: ${count}`);
           showCount(count);
           try {
-            localStorage.setItem(cacheKey, count);
+            localStorage.setItem(cacheKey, JSON.stringify({ count, time: Date.now() }));
           } catch (_) {
             // A storage failure must not discard a successful response.
           }
