@@ -1,142 +1,98 @@
 <!doctype html>
 <html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>自回归视频生成，应该怎样学习历史？</title>
+<title>迈向无限外推的世界模型</title>
 <link rel="alternate" hreflang="zh-Hans" href="index.html"><link rel="alternate" hreflang="en" href="en.html">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Source+Sans+3:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
-<link rel="stylesheet" href="css/blog.css"><link rel="stylesheet" href="blog.css?v=equations-2">
+<link rel="stylesheet" href="css/blog.css"><link rel="stylesheet" href="blog.css?v=en-2">
 <script data-goatcounter="https://sugewud.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
-</head><body><div class="shell"><nav class="toc" aria-label="目录"><p class="toc-k">目录</p><ol><li><a href="#top">引言</a></li>
-<li><a href="#从真实历史到自生成的历史">训练使用谁的历史</a></li>
-<li><a href="#让未来预测监督历史的表示">学习历史的表示</a></li>
-<li><a href="#当上下文写入与去噪发生冲突">当上下文写入与去噪发生冲突</a></li>
-<li><a href="#角色分离带来的启发">角色分离带来的启发</a></li>
-<li><a href="#结论">结论</a></li>
+</head><body><div class="shell"><nav class="toc" aria-label="目录"><p class="toc-k">目录</p><ol><li><a href="#从视频生成到实时交互">从视频生成到实时交互</a></li>
+<li><a href="#走向更好-更长的生成">走向更好、更长的生成</a></li>
+<li><a href="#让未来损失监督历史的学习">让未来损失监督历史的学习</a></li>
+<li><a href="#一些思考">一些思考</a></li>
+<li><a href="#从长视频走向可交互的世界">从长视频走向可交互的世界</a></li>
 <li><a href="#references">参考文献</a></li>
 <li><a href="#cite">引用</a></li></ol></nav><main class="page">
-<header class="mast"><p class="date">2026年10月14日</p><nav class="lang"><a class="" href="en.html" lang="en">English</a><a class="on" href="index.html" lang="zh-Hans">中文</a></nav></header>
-<article><h1 id="top">自回归视频生成，应该怎样学习历史？</h1><p class="byline">Zihan Su，清华大学</p><p>自回归视频模型逐帧或逐块生成视频，每一步都以此前的内容为历史条件，生成当前内容。随着生成不断推进，模型需要保持人物外观、场景结构和运动的连贯性。这既取决于模型如何表示历史，也取决于它如何利用历史表征。</p>
-<h2 id="从真实历史到自生成的历史">从真实历史到自生成的历史</h2>
-<p>训练自回归模型，一种自然的做法是给它一段训练视频中的真实历史帧，再要求它预测后续内容。这就是 Teacher Forcing（TF）。模型以这些干净的历史帧为条件，对当前带噪的内容进行去噪。</p>
-<div class="math-block">\[
-\hat{x}_i=\mathcal D_\theta\!\left(z_i^t,t\mid x_{&lt;i}^{\mathrm{data}}\right),\qquad
-x_{&lt;i}^{\mathrm{data}}\sim p_{\mathrm{data}}.
-\tag{1}
-\]</div>
-<p>其中，\(z_i^t\) 是当前帧的带噪表示，\(\hat{x}_i\) 是预测的干净帧，\(x_{&lt;i}^{\mathrm{data}}\) 是来自真实视频分布 \(p_{\mathrm{data}}\) 的历史。</p>
-<p>这种训练方式便于构造监督，也可以在因果条件下并行处理多个位置。模型不必等自己一步步生成完整段视频，便能学习许多历史与后续内容之间的关系。不过真实历史与模型实际生成的历史可能不同。</p>
-<p>例如，模型在生成早期改变了一个物体的形状，后面的预测就需要面对这个已经变化的物体。真实视频序列里未必有这样的偏差，模型也就可能没有学过怎样在这种条件下继续。生成越长，新的误差越可能叠加在已有误差上，让模型逐渐偏离训练时熟悉的条件。</p>
-<p>Self Forcing（SF）<a class="cite" href="#ref-2">2</a> 的做法是让模型在训练时也使用自己的历史。学生先自回归生成视频，把自己的输出作为后续预测的条件，再通过分布匹配蒸馏（DMD）目标学习生成分布。这样，训练会接触当前模型实际访问到的历史，模型有机会根据自己的生成表现调整预测。</p>
-<div class="math-block">\[
-\hat{x}_i=\mathcal D_\theta\!\left(z_i^t,t\mid\tilde{x}_{&lt;i}\right),\qquad
-\tilde{x}_{&lt;i}\sim p_\theta.
-\tag{2}
-\]</div>
-<p>其中，\(\tilde{x}_{&lt;i}\) 是当前模型自己生成的历史，\(p_\theta\) 表示模型的生成分布。与 TF 相比，当前帧预测所依赖的条件从真实历史换成了自生成历史。</p>
-<p>不过，当生成的视频超出训练时的长度，SF 仍然可能出现明显的误差累积。模型不断读取自己的输出，早期的偏差也会成为后续预测的条件，逐渐表现为场景跳变、物体形变、主体消失或额外人物出现。</p>
-<p>为了缓解误差累积，需要进一步看模型怎样记录和使用自己生成的历史。加入历史 KV 的写入后，式（2）可以写成：</p>
-<div class="math-block">\[
-\hat{x}_i
-=
-\mathcal D_{\theta}\!\left(
-z_i^t,\,t
-\;\middle|\;
-\mathrm{KV}_{&lt;i}
-\right),
-\qquad i=1,\ldots,T,\quad t&gt;0.
-\tag{3}
-\]</div>
-<div class="math-block">\[
-\mathrm{KV}_{i}
-=
-\mathcal D_{\theta}\!\left(
-\tilde{x}_i,\,t_{\mathrm{ctx}}
-\;\middle|\;
-\mathrm{KV}_{&lt;i}
-\right),\qquad t_{\mathrm{ctx}}=0.
-\tag{4}
-\]</div>
-<p>其中，预测当前帧时，\(\mathcal D_\theta\) 读取已有的历史表征 \(\mathrm{KV}_{&lt;i}\)，对带噪表示 \(z_i^t\) 进行去噪，得到干净帧预测 \(\hat{x}_i\)。构建历史KV时，\(\mathcal D_\theta\) 将生成的帧 \(\tilde{x}_i\) 以时间步 \(t_{\mathrm{ctx}}=0\) 为条件编码为 \(\mathrm{KV}_i\)，供后续预测使用。\(T\) 表示训练窗口长度。</p>
-<p>为了缓解长时间生成中的误差累积，一种直接的做法是增大 \(T\)，也就是让模型在训练时就生成更长的视频。LongLive <a class="cite" href="#ref-4">4</a> 沿着自生成历史逐段继续，每生成一个短片段，就用短视频教师提供 DMD 监督。Self-Forcing++ <a class="cite" href="#ref-5">5</a> 则从更长的自生成序列中抽取连续片段进行蒸馏。这些方法让模型接触到短序列训练中较少出现的退化状态，学习在已有误差上继续生成。</p>
-<p>另一些工作则从 \(\mathrm{KV}_{&lt;i}\) 中筛选供当前预测读取的历史，也就是改善推理过程中对历史 KV 表征的使用。Deep Forcing <a class="cite" href="#ref-6">6</a> 保留较大比例的早期历史作为参考，并根据近期预测的注意力分数筛选缓存，保留有用信息、移除冗余内容。这样，有限的缓存可以保留更有用的历史 KV 表征，支持更长的视频生成。</p>
-<p>上述方法主要围绕式（3），通过延长训练序列或筛选历史 KV 来改善长时间生成，而式（4）仍有进一步探索的空间：<strong>历史 KV 应该如何表示，才能帮助后面的预测？</strong> SF 截断了历史 KV 构建过程中的梯度，使未来损失无法沿这条路径监督历史的写入。延长训练序列或调整缓存策略，本身并不会恢复这条监督路径。</p>
-<h2 id="让未来预测监督历史的表示">让未来预测监督历史的表示</h2>
-<p>Self Gradient Forcing（SGF）<a class="cite" href="#ref-3">3</a> 从式（4）出发，让未来预测的损失能够监督历史表征的构建，使模型学会为后续生成写入更有用的历史信息。</p>
-<p>沿用式（4）的记号，SF 与 SGF 对历史写入的处理可以概括为：</p>
-<div class="math-block">\[
-\begin{aligned}
-\mathrm{SF}:\quad
-\mathrm{KV}_i
-&amp;=\operatorname{sg}\!\left(
-\mathcal D_\theta(\tilde{x}_i,t_{\mathrm{ctx}}\mid\mathrm{KV}_{&lt;i})
-\right),\\
-\mathrm{SGF}:\quad
-\mathrm{KV}_i
-&amp;=\mathcal D_\theta\!\left(
-\operatorname{sg}(\tilde{x}_i),t_{\mathrm{ctx}}\mid\mathrm{KV}_{&lt;i}
-\right).
-\end{aligned}
-\tag{5}
-\]</div>
-<p>其中，\(\operatorname{sg}\) 表示停止梯度。SF 将写入后的 KV 作为固定条件；SGF 固定的是已经生成的帧，重新构建的历史 KV 则保留梯度。</p>
-<p>具体来说，SGF 的训练分为两遍计算。第一遍无梯度地自回归生成视频，记录模型已生成的视频帧，以及所选去噪步骤的带噪输入。第二遍使用这些记录，在因果注意力下并行重建历史 KV 和目标预测。已经生成的帧保持停止梯度，历史 KV 的构建过程则参与反向传播。因此，后面一帧的预测损失可以经由它读取的 KV，更新前面历史的写入过程，而不必对完整的串行采样轨迹反向传播。</p>
-<p>这使式（3）的预测结果能够监督式（4）的历史写入。即使输入完全相同的历史画面，模型也可以根据后续预测的需要，学习保留哪些信息、怎样将它们表示在 KV 中。</p>
-<h2 id="当上下文写入与去噪发生冲突">当上下文写入与去噪发生冲突</h2>
+<header class="mast"><p class="date">2026年10月17日</p><nav class="lang"><a class="" href="en.html" lang="en">English</a><a class="on" href="index.html" lang="zh-Hans">中文</a></nav></header>
+<article><h1 id="top">迈向无限外推的世界模型</h1><p class="subtitle">流式视频生成的过去、现在与未来</p>
+<h2 id="从视频生成到实时交互">从视频生成到实时交互</h2>
+<p>对于一个可以交互的世界，未来是在每一次输入到来后逐步确定的。用户向左转，模型就需要生成左侧的景象；用户继续前进，生成也需要继续。视频因此需要具备一种基本能力：根据已经发生的事情，及时生成下一步。</p>
+<p>CausVid <a class="cite" href="#ref-10">10</a> 是这条路线的重要起点之一。双向视频扩散在整段视频上联合去噪，当前画面可以借助未来信息；因果生成则把计算沿时间展开，让模型依靠过去生成当前。CausVid 将双向教师的能力蒸馏到少步因果学生中，并通过 KV cache 复用历史计算，把高质量视频模型带向流式输出。</p>
+<p>要让模型实现高效的自回归生成，还需要解决训练与效率两个问题：怎样组织历史与当前内容，让模型学会接着过去预测；怎样减少每一步的去噪计算，让生成跟上交互。</p>
+<p>Teacher Forcing 从真实历史出发训练后续预测。Diffusion Forcing <a class="cite" href="#ref-8">8</a> 则进一步允许不同位置拥有不同的噪声水平，使序列预测与扩散去噪能够在同一个框架中组织。少步蒸馏解决的是另一个实际问题：即使模型能够按顺序输出，每一步仍然需要足够快，才能接上用户的交互。</p>
+<p><strong>流式生成把视频组织成了一个反复执行的预测过程。每一次预测，都在为下一次预测创造条件。</strong> 随之而来的问题是，训练时使用的历史与实际运行时可能并不相同：Teacher Forcing 提供真实视频中的历史，自回归生成时，模型却需要依赖自己此前的输出。即使每一步只有细微偏差，这些偏差也会进入后续预测的条件，导致误差随着生成不断累积。</p>
+<p>因此，在真实历史上学会预测，并不意味着模型能够接着自己的输出继续生成。Self Forcing <a class="cite" href="#ref-2">2</a> 将模型自己生成的历史引入训练：模型通过带 KV cache 的 rollout，接着此前生成的内容继续预测，并接受视频级分布匹配监督。这样，模型在训练时就能面对自身输出带来的偏差，学习在这些条件下继续生成。</p>
+<h2 id="走向更好-更长的生成">走向更好、更长的生成</h2>
+<p>Self Forcing 之后，自回归视频生成的瓶颈开始分化：学生从怎样的模型起步，短窗口监督怎样覆盖长过程，有限上下文又该如何支持更长的推理？</p>
+<p><strong>学生模型需要一个怎样的初始化？</strong> Causal Forcing <a class="cite" href="#ref-11">11</a> 关注的正是这个问题。在少步模型的 ODE 初始化中，双向教师可以利用未来信息，因果学生却只能看到过去和当前输入。如果回归目标依赖学生看不到的内容，同一个可见输入就可能对应不同的目标。Causal Forcing 因此使用自回归教师进行 ODE 初始化，让回归目标与学生能够访问的信息相适应，再进行 Self Forcing 的分布匹配训练。</p>
+<p>Causal Forcing++ <a class="cite" href="#ref-12">12</a> 进一步推进逐帧的 1–2 步生成，通过 causal consistency distillation，利用相邻时间步的在线教师监督学习少步初始化，减少完整 ODE 轨迹的预计算与存储。更少的采样步骤和更细的输出粒度，共同缩短了交互中的等待。</p>
+<p>初始化改善了模型的训练起点，但要让视频生成得更长，还需要处理训练时长与推理时长之间的差距。训练窗口时长有限，因为直接延长训练窗口会增加时空 token 和中间状态的数量，带来更高的显存占用与计算开销，并且双向教师模型也只能在短视频上提供可靠的监督。而实际交互却可能持续几分钟甚至几个小时，远超训练能够直接覆盖的时间范围。</p>
+<p><strong>如何用短窗口监督，训练更长的生成过程？</strong> LongLive <a class="cite" href="#ref-4">4</a> 通过 streaming long tuning，让模型沿自身生成的历史逐段继续，并用短视频教师监督每一段，同时通过短窗口注意力与 frame sink 控制计算成本、保留历史锚点。Self-Forcing++ <a class="cite" href="#ref-5">5</a> 则从模型生成的长视频中抽取片段进行蒸馏，让短视频教师的监督覆盖更长的生成轨迹。两种方法都将长过程拆成教师能够评价的局部，让有限范围的监督作用于更长的自生成轨迹。</p>
+<p>Rolling Forcing <a class="cite" href="#ref-13">13</a> 则调整生成推进的方式。它对多个处于不同噪声水平的帧联合去噪，放松相邻帧之间的严格因果约束。生成能够走多远，也与每一步怎样组织有关。</p>
+<p><strong>有限的上下文，如何支撑更长的视频推理？</strong> 随着推理时长增加，模型无法始终保留并读取全部历史，需要在有限的缓存预算内选择有用的信息。Deep Forcing <a class="cite" href="#ref-6">6</a> 保留早期历史作为锚点，并根据近期预测的注意力筛选历史 KV，减少冗余内容，让有限缓存更有效地支持后续生成。Infinity-RoPE <a class="cite" href="#ref-14">14</a> 则从时间位置编码入手，通过随生成推进的局部坐标系组织历史与当前内容，避免时间位置不断增长、超出模型原有的编码范围。两者分别从历史选择与位置编码入手，改善长程推理中的上下文使用。</p>
+<p>这些方向作用于不同环节：初始化决定学生的起点，长程训练与去噪调度改变生成如何推进，历史选择决定每一步保留哪些信息，位置编码则组织这些信息与当前预测的时间关系。</p>
+<figure class="roadmap"><a href="assets/streaming_evolution.svg?v=6" target="_blank"><img src="assets/streaming_evolution.svg?v=6" alt="从 CausVid、Self Forcing 到学生模型初始化、长程生成与训练、历史选择与位置编码三个研究方向"></a></figure>
+<h2 id="让未来损失监督历史的学习">让未来损失监督历史的学习</h2>
+<p>前面的工作从模型的初始化、长程训练、历史选择和位置编码等方面改善了自回归视频生成。但当推理时长超出训练窗口后，仍然会出现明显的误差累积，表现为画面漂移、崩坏等现象。这可能与历史表征的学习有关：<strong>模型学会了如何利用历史表征，但历史表征的构建过程本身仍缺少监督。</strong></p>
+<p>历史画面需要被编码为 KV 表征，才能供后续生成读取。除了学习如何利用这些表征，模型还需要学习如何构建它们。既然历史表征服务于未来预测，就可以让未来的生成损失沿历史 KV 返回，指导模型将历史写成对后续生成有用的信息。</p>
+<figure class="memory-flow"><div class="memory-flow-diagram"><b>历史画面</b><span class="flow-forward">→</span><b class="flow-writer">上下文<wbr>写入模型</b><span class="flow-forward">→</span><b>历史 KV</b><span class="flow-forward">→</span><b>未来生成</b><div class="flow-return" aria-hidden="true"></div><figcaption><span>未来生成的损失沿历史 KV 返回，监督写入过程。</span></figcaption></div></figure>
+<p>在 Self Forcing 中，历史 KV 的构建路径被截断梯度，后续损失无法沿这条路径更新写入过程。Self Gradient Forcing（SGF）<a class="cite" href="#ref-3">3</a> 恢复了上下文梯度，让未来损失能够监督历史表征的构建。</p>
+<p>为避免对完整采样轨迹反向传播，SGF 将训练分为两遍。第一遍执行无梯度 rollout，记录生成画面与选定退出步的输入。第二遍通过因果掩码并行重建历史 KV 与当前预测。生成画面保持停止梯度，构建历史 KV 的计算则参与反向传播。</p>
+<p>SGF 在短窗口内学习如何构建有助于未来预测的历史表征，并在更长的推理过程中反复使用这一写入机制。在推理时长超越训练时长时，SGF 显著改善了长程一致性。</p>
 <p>恢复历史写入的梯度后，SGF 改善了长时间生成的一致性，但也出现了一个现象：部分样例中，SGF 的首帧相比 SF 出现了轻微模糊。首帧还没有历史视频 KV 可以读取，它的质量变化提供了一个线索：<strong>用于学习历史表征的梯度，是否会与当前画面去噪的梯度相互干扰？</strong></p>
-<p>在 SGF 中，式（3）的去噪和式（4）的历史写入共用参数 \(\theta\)。前者从带噪的当前内容中恢复画面，后者将干净的历史内容编码为未来预测可用的 KV。两种计算服务于同一个生成目标，却未必要求参数沿着相同的方向更新。</p>
-<p>为检查这一点，可以在同一次重建计算中，分别提取上下文写入与去噪对共享参数的梯度贡献，记为 \(g_{\mathrm C}\) 和 \(g_{\mathrm D}\)。共享参数接收两者之和，而它们的方向是否一致，可以用余弦相似度衡量：</p>
-<div class="math-block">\[
-g_\theta=g_{\mathrm C}+g_{\mathrm D},
-\qquad
-s=\frac{\langle g_{\mathrm C},g_{\mathrm D}\rangle}
-{\lVert g_{\mathrm C}\rVert_2\lVert g_{\mathrm D}\rVert_2}.
-\tag{6}
-\]</div>
-<p>当 \(s&lt;0\) 时，两种梯度的夹角超过 \(90^\circ\)，更新共享参数时会部分抵消。在 128 个提示词、4 个去噪时间步的配对测量中，Attention 和 FFN 模块各得到 512 对角色梯度，余弦相似度均为负，表明这一冲突在不同提示词和去噪时间步下持续存在。两种角色的梯度在 t-SNE 投影中也呈现出不同的簇。Attention 和 FFN 中的平均梯度方向夹角分别约为 \(104.2^\circ\) 和 \(106.3^\circ\)。</p>
-<figure><div class="panels panels-3"><a href="assets/gradient_distributions.png" target="_blank"><img src="assets/gradient_distributions.png" alt="上下文写入与去噪的梯度。左：角色分布的 t-SNE 投影；中：平均方向；右：同一 prompt、同一去噪时间步下的配对余弦。投影与平均方向使用采样坐标，配对余弦基于所选权重的完整梯度。数据来自 SGF+ [1]。" loading="lazy"></a><a href="assets/mean_gradient_directions.png" target="_blank"><img src="assets/mean_gradient_directions.png" alt="上下文写入与去噪的梯度。左：角色分布的 t-SNE 投影；中：平均方向；右：同一 prompt、同一去噪时间步下的配对余弦。投影与平均方向使用采样坐标，配对余弦基于所选权重的完整梯度。数据来自 SGF+ [1]。" loading="lazy"></a><a href="assets/gradient_conflict.png" target="_blank"><img src="assets/gradient_conflict.png" alt="上下文写入与去噪的梯度。左：角色分布的 t-SNE 投影；中：平均方向；右：同一 prompt、同一去噪时间步下的配对余弦。投影与平均方向使用采样坐标，配对余弦基于所选权重的完整梯度。数据来自 SGF+ [1]。" loading="lazy"></a></div><figcaption>上下文写入与去噪的梯度。左：角色分布的 t-SNE 投影；中：平均方向；右：同一 prompt、同一去噪时间步下的配对余弦。投影与平均方向使用采样坐标，配对余弦基于所选权重的完整梯度。数据来自 SGF+ [1]。</figcaption></figure>
-<p>这些结果表明，<strong>上下文写入与去噪存在梯度冲突。</strong> SGF 恢复了未来预测对历史写入的监督，但两条路径的梯度仍作用于同一套参数，更新时会部分抵消，使历史表征学习与当前画面去噪难以同时得到充分优化。</p>
-<p>Self Gradient Forcing Plus（SGF+）<a class="cite" href="#ref-1">1</a> 因此为上下文写入与去噪分配独立参数：去噪器 \(\mathcal D_{\theta_d}\) 负责生成当前画面，上下文写入器 \(\mathcal C_{\theta_c}\) 负责构建供后续预测读取的历史 KV。对应地，式（3）与式（4）变为：</p>
-<div class="math-block">\[
-\begin{aligned}
-\hat{x}_i
-&amp;=\mathcal D_{\theta_d}\!\left(z_i^t,t\mid\mathrm{KV}_{&lt;i}\right),
-\qquad t&gt;0,\\
-\mathrm{KV}_i
-&amp;=\mathcal C_{\theta_c}\!\left(
-\operatorname{sg}(\tilde{x}_i),t_{\mathrm{ctx}}\mid\mathrm{KV}_{&lt;i}
-\right),
-\qquad t_{\mathrm{ctx}}=0.
-\end{aligned}
-\tag{7}
-\]</div>
-<p>参数分开后，两种角色仍通过历史 KV 协作。当前预测的损失更新去噪器，也沿着 KV 的计算路径传回上下文写入器，让它学习为后续生成保留有用的信息。原先累积到共享参数上的两种梯度，现在分别更新各自的参数。</p>
-<p>训练沿用 SGF 的两遍计算和原有的 DMD 目标，无需额外设计记忆损失。改变的是两种角色的优化空间：去噪器学习怎样利用历史生成当前画面，写入器学习怎样表示历史，以帮助未来预测。</p>
-<p>从 TF 到 SF，改变的是训练时使用真实历史还是自生成历史；从 SF 到 SGF，改变的是历史表征能否得到未来预测的监督；从 SGF 到 SGF+，则进一步考虑了历史写入与当前去噪各自需要怎样的参数更新。</p>
+<p>Self Gradient Forcing Plus（SGF+）<a class="cite" href="#ref-1">1</a> 在 Wan2.1 <a class="cite" href="#ref-15">15</a> 模型上分别测量了两种角色的梯度贡献。在 Attention 与 FFN 中，配对梯度均呈现负向对齐，说明历史写入与当前去噪对共享参数的更新存在冲突。两种贡献相加时会部分抵消，使两种角色难以同时得到充分优化。</p>
+<figure><div class="panels panels-3"><a href="assets/gradient_distributions.png" target="_blank"><img src="assets/gradient_distributions.png" alt="Wan2.1 中上下文写入与去噪的梯度关系。左：角色分布的 t-SNE 投影；中：平均方向；右：同一 prompt、同一去噪时间步下的配对余弦。在 128 个提示词、4 个去噪时间步下，Attention 与 FFN 各得到 512 对梯度，配对余弦均为负；平均方向夹角分别约为 104.2° 和 106.3°。投影与平均方向使用采样坐标，配对余弦基于所选权重的完整梯度。数据来自 SGF+ [1]。" loading="lazy"></a><a href="assets/mean_gradient_directions.png" target="_blank"><img src="assets/mean_gradient_directions.png" alt="Wan2.1 中上下文写入与去噪的梯度关系。左：角色分布的 t-SNE 投影；中：平均方向；右：同一 prompt、同一去噪时间步下的配对余弦。在 128 个提示词、4 个去噪时间步下，Attention 与 FFN 各得到 512 对梯度，配对余弦均为负；平均方向夹角分别约为 104.2° 和 106.3°。投影与平均方向使用采样坐标，配对余弦基于所选权重的完整梯度。数据来自 SGF+ [1]。" loading="lazy"></a><a href="assets/gradient_conflict.png" target="_blank"><img src="assets/gradient_conflict.png" alt="Wan2.1 中上下文写入与去噪的梯度关系。左：角色分布的 t-SNE 投影；中：平均方向；右：同一 prompt、同一去噪时间步下的配对余弦。在 128 个提示词、4 个去噪时间步下，Attention 与 FFN 各得到 512 对梯度，配对余弦均为负；平均方向夹角分别约为 104.2° 和 106.3°。投影与平均方向使用采样坐标，配对余弦基于所选权重的完整梯度。数据来自 SGF+ [1]。" loading="lazy"></a></div><figcaption>Wan2.1 中上下文写入与去噪的梯度关系。左：角色分布的 t-SNE 投影；中：平均方向；右：同一 prompt、同一去噪时间步下的配对余弦。在 128 个提示词、4 个去噪时间步下，Attention 与 FFN 各得到 512 对梯度，配对余弦均为负；平均方向夹角分别约为 104.2° 和 106.3°。投影与平均方向使用采样坐标，配对余弦基于所选权重的完整梯度。数据来自 SGF+ [1]。</figcaption></figure>
+<p>类似现象也出现在 LTX-2.5 <a class="cite" href="#ref-16">16</a> 上。下面的热力图中，多数层与噪声水平组合的平均配对梯度余弦为负，且冲突强度随层位置和噪声水平变化。这组测量进一步表明，上下文写入和去噪存在梯度冲突。</p>
+<figure><div class="panels panels-1"><a href="assets/ltx25/ltx25_gradient_conflict_edited.png" target="_blank"><img src="assets/ltx25/ltx25_gradient_conflict_edited.png" alt="LTX-2.5 中上下文写入与去噪的梯度关系，覆盖 4 个噪声水平。每个单元格表示对应层与噪声水平下的配对梯度余弦均值。蓝色表示方向冲突，红色表示方向一致。FFN 第 47 层的写入梯度范数为零，余弦未定义，以斜线标记。" loading="lazy"></a></div><figcaption>LTX-2.5 中上下文写入与去噪的梯度关系，覆盖 4 个噪声水平。每个单元格表示对应层与噪声水平下的配对梯度余弦均值。蓝色表示方向冲突，红色表示方向一致。FFN 第 47 层的写入梯度范数为零，余弦未定义，以斜线标记。</figcaption></figure>
+<p>基于这一观察，SGF+ 为上下文写入器和去噪器分配独立参数。写入器负责将干净历史组织成 KV，去噪器读取这些 KV，完成当前画面的去噪。两者通过历史表征协作，并由同一个生成目标联合训练。</p>
+<p>这种分工保留了 SGF 恢复的监督关系。损失直接更新去噪器，也通过去噪器对历史 KV 的依赖，继续向写入器传播。写入器因而能够学习怎样帮助后续生成，同时拥有独立于去噪器的参数空间。共同的目标仍将二者联系在一起，角色分离则允许它们分别优化各自的计算。</p>
+<p>在 framewise 和 chunkwise 设置下，SGF+ 改善了视觉质量与长程一致性，并在五秒训练窗口下展示最长 24 小时的连续视频生成，无需长视频微调。这一结果展示了训练窗口与推理时长之间可以达到的跨度。</p>
+<p>从 SGF 到 SGF+，历史表征的监督与参数分工逐步被纳入训练。SGF 让未来损失能够训练历史写入，SGF+ 则进一步处理这部分学习与当前去噪之间的冲突。这两步设计围绕同一个问题展开：怎样让模型留下对未来生成更有用的过去。</p>
 <figure><div class="panels panels-1"><a href="assets/forcing_evolution.png" target="_blank"><img src="assets/forcing_evolution.png" alt="从 TF 到 SF、SGF、SGF+：依次处理历史分布差异、上下文写入的梯度缺失，以及写入与去噪的梯度冲突。" loading="lazy"></a></div><figcaption>从 TF 到 SF、SGF、SGF+：依次处理历史分布差异、上下文写入的梯度缺失，以及写入与去噪的梯度冲突。</figcaption></figure>
-<h2 id="角色分离带来的启发">角色分离带来的启发</h2>
-<p><strong>与 GPT/LLM 的联系。</strong> 同样是自回归生成，为什么LLM不需要角色分离，而视频模型需要考虑角色分离？ 语言理解与生成已广泛在统一的 token 预测框架下建模，而视觉理解与生成如何统一，仍有许多开放问题。从计算过程看，GPT 在一次前向计算中构建 KV 并预测下一个 token，自回归视频扩散则交替执行 \(t=0\) 的上下文写入与 \(t&gt;0\) 的去噪生成。上下文写入需要提取供未来预测使用的历史信息，去噪生成需要从带噪输入中恢复当前画面。这些输入状态与计算角色的差异，可能使共享参数面临不同、甚至冲突的优化需求。</p>
+<h2 id="一些思考">一些思考</h2>
+<p>历史写入与当前去噪通过 KV 紧密联系，但这种协作并不要求它们使用完全相同的权重。角色分离由此引出了三个值得继续探索的问题。</p>
+<p><strong>与 GPT/LLM 的联系。</strong> 同样是自回归生成，为什么LLM不需要角色分离，而视频模型需要考虑角色分离？ 语言理解与生成已广泛在统一的 token 预测框架下建模，而视觉理解与生成如何统一，仍有许多开放问题。从计算过程看，GPT 在一次前向计算中构建 KV 并预测下一个 token，自回归视频扩散则交替执行 <code>t=0</code> 的上下文写入与 <code>t&gt;0</code> 的去噪生成。上下文写入需要提取供未来预测使用的历史信息，去噪生成需要从带噪输入中恢复当前画面。这些输入状态与计算角色的差异，可能使共享参数面临不同、甚至冲突的优化需求。</p>
 <p><strong>参数分离也可以从更早的阶段开始。</strong> TF 初始化模型中已经可以观察到角色梯度的差异和负向对齐，说明上下文写入与去噪的冲突并不是到 SGF 训练后才出现。因此，角色分离可以进一步前移到 TF 阶段，让模型从初始化训练开始，就分别学习如何构建历史表征、如何利用历史完成预测。这一思路也可以拓展到世界动作模型（World Action Model）。世界动作模型通常采用 Teacher Forcing 训练，为这一方向提供了自然的应用场景。将上下文写入与视觉、动作预测分开，可能有助于模型更有效地学习服务于后续预测的历史表征。</p>
 <p><strong>轻量 writer 与 KV 压缩。</strong> 角色分离使模型可以按需分配容量，为上下文写入与去噪采用不同规模的网络。一个值得探索的方向是使用轻量写入器，在有限的缓存预算下，将冗余的视频历史压缩为供后续预测使用的 KV 表征。训练时可以固定去噪器参数，保持其读取历史 KV 的方式不变，通过未来生成损失优化写入器。目标是在保持生成质量与长程一致性的同时，降低参数存储、KV 缓存占用和注意力计算开销。</p>
-<h2 id="结论">结论</h2>
-<p>从 TF 到 SF，训练从真实历史走向自生成历史，让模型学习面对自己的输出继续预测。SGF 进一步恢复历史写入的梯度，使未来预测能够监督历史表征的构建。SGF+ 则针对上下文写入与去噪的梯度冲突，为两种角色分配独立参数，让它们在同一个生成目标下分别得到优化。</p>
-<p>自回归视频生成应该怎样学习历史？模型需要适应自己生成的内容，也需要学会将这些内容表示为未来可用的信息。这要求训练同时关注历史的读取与写入，让两种角色在共同的生成目标下得到充分优化。</p>
+<h2 id="从长视频走向可交互的世界">从长视频走向可交互的世界</h2>
+<p><strong>训练窗口是有限的，用户与世界的交互却没有预定的终点。</strong> 迈向世界模型，需要回答一个更长期的问题：模型能否从短暂的训练经历中，学到可以在未来反复使用的生成与记忆机制？</p>
+<p>SGF 与 SGF+ 对这一问题给出了一个具体的探索方向。历史表征服务于未来预测，未来损失也可以反过来指导历史表征的构建。模型在短窗口内学习如何留下有用的信息，再在更长的推理过程中不断使用这一能力。由此，训练窗口的长度不必直接决定推理能够延续的时间。</p>
+<p>从长视频走向可交互世界，还需要让这种能力承载动作、状态和环境变化。用户采取行动，模型生成结果，并将结果写入历史，作为下一次交互的条件。随着这一过程不断重复，世界需要保持空间关系、物体身份和行动后果的一致。</p>
+<p>这也为未来系统提出了一种设计方向：让历史写入负责保留关键状态，让生成模型负责响应当前输入，通过共同目标学习两者的协作。<strong>无限外推的愿景，是用有限的训练与计算，支撑不断展开的世界。</strong></p>
 <h2 id="references">参考文献</h2>
 <div class="refs"><ol><li id="ref-1">Su, Z., Zhuang, J., Li, Y., et al. <em>SGF+: Decoupling Gradient Flows for Autoregressive Video Generation.</em> arXiv:2610.10429v2, 2026. <a href="https://arxiv.org/abs/2610.10429v2">https://arxiv.org/abs/2610.10429v2</a></li>
 <li id="ref-2">Huang, X., Li, Z., He, G., Zhou, M., and Shechtman, E. <em>Self Forcing: Bridging the Train-Test Gap in Autoregressive Video Diffusion.</em> arXiv:2506.08009, 2025. <a href="https://arxiv.org/abs/2506.08009">https://arxiv.org/abs/2506.08009</a></li>
 <li id="ref-3">Zhuang, J., Zhang, S., Bian, Y., et al. <em>Self Gradient Forcing: Native Long Video Extrapolation.</em> arXiv:2607.20368, 2026. <a href="https://arxiv.org/abs/2607.20368">https://arxiv.org/abs/2607.20368</a></li>
 <li id="ref-4">Yang, S., Huang, W., Chu, R., et al. <em>LongLive: Real-time Interactive Long Video Generation.</em> arXiv:2509.22622, 2025. <a href="https://arxiv.org/abs/2509.22622">https://arxiv.org/abs/2509.22622</a></li>
 <li id="ref-5">Cui, J., Wu, J., Li, M., et al. <em>Self-Forcing++: Towards Minute-Scale High-Quality Video Generation.</em> arXiv:2510.02283, 2025. <a href="https://arxiv.org/abs/2510.02283">https://arxiv.org/abs/2510.02283</a></li>
-<li id="ref-6">Yi, J., Jang, W., Cho, P. H., et al. <em>Deep Forcing: Training-Free Long Video Generation with Deep Sink and Participative Compression.</em> arXiv:2512.05081, 2025. <a href="https://arxiv.org/abs/2512.05081">https://arxiv.org/abs/2512.05081</a></li></ol></div>
+<li id="ref-6">Yi, J., Jang, W., Cho, P. H., et al. <em>Deep Forcing: Training-Free Long Video Generation with Deep Sink and Participative Compression.</em> arXiv:2512.05081, 2025. <a href="https://arxiv.org/abs/2512.05081">https://arxiv.org/abs/2512.05081</a></li>
+<li id="ref-7">Bengio, S., Vinyals, O., Jaitly, N., and Shazeer, N. <em>Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks.</em> 2015. <a href="https://arxiv.org/abs/1506.03099">https://arxiv.org/abs/1506.03099</a></li>
+<li id="ref-8">Chen, B., Martí Monsó, D., Du, Y., et al. <em>Diffusion Forcing: Next-token Prediction Meets Full-Sequence Diffusion.</em> 2024. <a href="https://arxiv.org/abs/2407.01392">https://arxiv.org/abs/2407.01392</a></li>
+<li id="ref-9">Dai, Z., Yang, Z., Yang, Y., et al. <em>Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context.</em> 2019. <a href="https://arxiv.org/abs/1901.02860">https://arxiv.org/abs/1901.02860</a></li>
+<li id="ref-10">Yin, T., Zhang, Q., Zhang, R., et al. <em>From Slow Bidirectional to Fast Autoregressive Video Diffusion Models.</em> CVPR 2025. <a href="https://arxiv.org/abs/2412.07772">https://arxiv.org/abs/2412.07772</a></li>
+<li id="ref-11">Zhu, H., Zhao, M., He, G., et al. <em>Causal Forcing: Autoregressive Diffusion Distillation Done Right for High-Quality Real-Time Interactive Video Generation.</em> 2026. <a href="https://arxiv.org/abs/2602.02214">https://arxiv.org/abs/2602.02214</a></li>
+<li id="ref-12">Zhao, M., Zhu, H., Zheng, K., et al. <em>Causal Forcing++: Scalable Few-Step Autoregressive Diffusion Distillation for Real-Time Interactive Video Generation.</em> 2026. <a href="https://arxiv.org/abs/2605.15141">https://arxiv.org/abs/2605.15141</a></li>
+<li id="ref-13">Liu, K., Hu, W., Xu, J., Shan, Y., and Lu, S. <em>Rolling Forcing: Autoregressive Long Video Diffusion in Real Time.</em> 2025. <a href="https://arxiv.org/abs/2509.25161">https://arxiv.org/abs/2509.25161</a></li>
+<li id="ref-14">Yesiltepe, H., Meral, T. H. S., Akan, A. K., Oktay, K., and Yanardag, P. <em>Infinity-RoPE: Action-Controllable Infinite Video Generation Emerges From Autoregressive Self-Rollout.</em> arXiv:2511.20649, 2025. <a href="https://arxiv.org/abs/2511.20649">https://arxiv.org/abs/2511.20649</a></li>
+<li id="ref-15">Wan Team. <em>Wan: Open and Advanced Large-Scale Video Generative Models.</em> arXiv:2503.20314, 2025. <a href="https://arxiv.org/abs/2503.20314">https://arxiv.org/abs/2503.20314</a></li>
+<li id="ref-16">Lightricks. <em>LTX-2.5.</em> Official model card, 2026. <a href="https://huggingface.co/Lightricks/LTX-2.5">https://huggingface.co/Lightricks/LTX-2.5</a></li></ol></div>
 <h2 id="cite">引用</h2>
 <div class="bib"><button type="button" class="bib-copy" data-copy>复制</button>
-<pre><code>@misc{su2026learninghistory,
-  author       = {Su, Zihan},
-  title        = {How Should Autoregressive Video Models Learn from History?},
-  year         = {2026},
-  month        = oct,
-  institution  = {Tsinghua University},
-  howpublished = {Blog post},
-  url          = {https://zihan-su.github.io/blog/sgf-plus/},
+<pre><code>@article{su2026sgf+,
+  title={SGF+: Decoupling Gradient Flows for Autoregressive Video Generation},
+  author={Su, Zihan and Zhuang, Junhao and Li, Yaowei and Lu, Siwen and Li, Haoran and Li, Lingen and Wu, Haoyu and Jin, Weiyang and Zhang, Songchun and Huang, Haoyang and others},
+  journal={arXiv preprint arXiv:2610.10429},
+  year={2026}
+}
+
+@article{zhuang2026self,
+  title   = {Self Gradient Forcing: Native Long Video Extrapolation},
+  author  = {Zhuang, Junhao and Zhang, Shiyi and Bian, Yuxuan
+             and Li, Yaowei and Luo, Yawen and Liu, Yijun
+             and Jin, Weiyang and Zhang, Songchun and He, Xianglong
+             and Zhang, Xuying and others},
+  journal = {arXiv preprint arXiv:2607.20368},
+  year    = {2026}
 }</code></pre></div>
 </article>
 <footer class="credit">版式参考了 <a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Thinking Machines Lab</a> 的研究笔记，谨此致谢。</footer>
