@@ -57,7 +57,7 @@
 <p><strong>训练窗口是有限的，交互过程却没有预定的结束时间。</strong> 用户可能连续几分钟甚至几个小时调整镜头、改变内容，视频模型需要不断响应，同时让新的画面与此前的生成保持连贯。长程生成能力因此成为实时交互视频的一项基础。</p>
 <p>SGF 与 SGF+ 探索了短窗口训练支持长程外推的一种可能：模型在有限窗口内学习如何构建有助于未来预测的历史表征，再在更长的推理过程中反复使用这一机制。训练能够直接覆盖的时间范围，不必成为视频推理时长的边界。</p>
 <p>走向更长、乃至无限外推，还需要让生成质量、交互响应与运行成本同时成立。新的输入应当及时影响后续画面，主体、场景与运动也需要保持连贯。随着推理不断延长，模型需要在有限缓存中保留关键历史，并以可承受的计算开销持续运行。</p>
-<p>这将为数字人、交互创作和实时视频应用打开更大的空间。用户可以边观看边调整，生成无需在预设的片段结尾停止。<strong>流式视频生成的未来，是迈向无限外推：从有限的训练窗口出发，突破生成的时间边界，开启永不落幕的视觉体验。</strong></p>
+<p>这将为世界模型、数字人和交互创作打开更大的空间。用户可以边观看边调整，生成无需在预设的片段结尾停止。<strong>流式视频生成的未来，是迈向无限外推：从有限的训练窗口出发，突破生成的时间边界，开启永不落幕的视觉体验。</strong></p>
 <h2 id="references">参考文献</h2>
 <div class="refs"><ol><li id="ref-1">Su, Z., Zhuang, J., Li, Y., et al. <em>SGF+: Decoupling Gradient Flows for Autoregressive Video Generation.</em> arXiv:2610.10429v2, 2026. <a href="https://arxiv.org/abs/2610.10429v2">https://arxiv.org/abs/2610.10429v2</a></li>
 <li id="ref-2">Huang, X., Li, Z., He, G., Zhou, M., and Shechtman, E. <em>Self Forcing: Bridging the Train-Test Gap in Autoregressive Video Diffusion.</em> arXiv:2506.08009, 2025. <a href="https://arxiv.org/abs/2506.08009">https://arxiv.org/abs/2506.08009</a></li>
