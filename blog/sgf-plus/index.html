@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>迈向无限外推的世界模型</title>
+<title>流式视频生成：从过去到未来</title>
 <link rel="alternate" hreflang="zh-Hans" href="index.html"><link rel="alternate" hreflang="en" href="en.html">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Source+Sans+3:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
@@ -10,13 +10,12 @@
 <li><a href="#走向更好-更长的生成">走向更好、更长的生成</a></li>
 <li><a href="#让未来损失监督历史的学习">让未来损失监督历史的学习</a></li>
 <li><a href="#一些思考">一些思考</a></li>
-<li><a href="#从长视频走向可交互的世界">从长视频走向可交互的世界</a></li>
+<li><a href="#迈向无限外推的视频生成">迈向无限外推的视频生成</a></li>
 <li><a href="#references">参考文献</a></li>
 <li><a href="#cite">引用</a></li></ol></nav><main class="page">
-<header class="mast"><p class="date">2026年10月17日</p><nav class="lang"><a class="" href="en.html" lang="en">English</a><a class="on" href="index.html" lang="zh-Hans">中文</a></nav></header>
-<article><h1 id="top">迈向无限外推的世界模型</h1><p class="subtitle">流式视频生成的过去、现在与未来</p>
-<h2 id="从视频生成到实时交互">从视频生成到实时交互</h2>
-<p>对于一个可以交互的世界，未来是在每一次输入到来后逐步确定的。用户向左转，模型就需要生成左侧的景象；用户继续前进，生成也需要继续。视频因此需要具备一种基本能力：根据已经发生的事情，及时生成下一步。</p>
+<header class="mast"><p class="date">2026年10月19日</p><nav class="lang"><a class="" href="en.html" lang="en">English</a><a class="on" href="index.html" lang="zh-Hans">中文</a></nav></header>
+<article><h1 id="top">流式视频生成：从过去到未来</h1><p class="byline">Zihan Su，清华大学</p><h2 id="从视频生成到实时交互">从视频生成到实时交互</h2>
+<p>在实时交互视频生成中，接下来的画面随着用户输入逐步确定。用户调整镜头方向，模型需要生成新的视角；用户改变提示词，后续画面需要响应新的内容。只要交互还在继续，生成就需要继续。这要求模型根据已有画面和新的输入，及时生成下一步。</p>
 <p>CausVid <a class="cite" href="#ref-10">10</a> 是这条路线的重要起点之一。双向视频扩散在整段视频上联合去噪，当前画面可以借助未来信息；因果生成则把计算沿时间展开，让模型依靠过去生成当前。CausVid 将双向教师的能力蒸馏到少步因果学生中，并通过 KV cache 复用历史计算，把高质量视频模型带向流式输出。</p>
 <p>要让模型实现高效的自回归生成，还需要解决训练与效率两个问题：怎样组织历史与当前内容，让模型学会接着过去预测；怎样减少每一步的去噪计算，让生成跟上交互。</p>
 <p>Teacher Forcing 从真实历史出发训练后续预测。Diffusion Forcing <a class="cite" href="#ref-8">8</a> 则进一步允许不同位置拥有不同的噪声水平，使序列预测与扩散去噪能够在同一个框架中组织。少步蒸馏解决的是另一个实际问题：即使模型能够按顺序输出，每一步仍然需要足够快，才能接上用户的交互。</p>
@@ -54,11 +53,11 @@
 <p><strong>与 GPT/LLM 的联系。</strong> 同样是自回归生成，为什么LLM不需要角色分离，而视频模型需要考虑角色分离？ 语言理解与生成已广泛在统一的 token 预测框架下建模，而视觉理解与生成如何统一，仍有许多开放问题。从计算过程看，GPT 在一次前向计算中构建 KV 并预测下一个 token，自回归视频扩散则交替执行 <code>t=0</code> 的上下文写入与 <code>t&gt;0</code> 的去噪生成。上下文写入需要提取供未来预测使用的历史信息，去噪生成需要从带噪输入中恢复当前画面。这些输入状态与计算角色的差异，可能使共享参数面临不同、甚至冲突的优化需求。</p>
 <p><strong>参数分离也可以从更早的阶段开始。</strong> TF 初始化模型中已经可以观察到角色梯度的差异和负向对齐，说明上下文写入与去噪的冲突并不是到 SGF 训练后才出现。因此，角色分离可以进一步前移到 TF 阶段，让模型从初始化训练开始，就分别学习如何构建历史表征、如何利用历史完成预测。这一思路也可以拓展到世界动作模型（World Action Model）。世界动作模型通常采用 Teacher Forcing 训练，为这一方向提供了自然的应用场景。将上下文写入与视觉、动作预测分开，可能有助于模型更有效地学习服务于后续预测的历史表征。</p>
 <p><strong>轻量 writer 与 KV 压缩。</strong> 角色分离使模型可以按需分配容量，为上下文写入与去噪采用不同规模的网络。一个值得探索的方向是使用轻量写入器，在有限的缓存预算下，将冗余的视频历史压缩为供后续预测使用的 KV 表征。训练时可以固定去噪器参数，保持其读取历史 KV 的方式不变，通过未来生成损失优化写入器。目标是在保持生成质量与长程一致性的同时，降低参数存储、KV 缓存占用和注意力计算开销。</p>
-<h2 id="从长视频走向可交互的世界">从长视频走向可交互的世界</h2>
-<p><strong>训练窗口是有限的，用户与世界的交互却没有预定的终点。</strong> 迈向世界模型，需要回答一个更长期的问题：模型能否从短暂的训练经历中，学到可以在未来反复使用的生成与记忆机制？</p>
-<p>SGF 与 SGF+ 对这一问题给出了一个具体的探索方向。历史表征服务于未来预测，未来损失也可以反过来指导历史表征的构建。模型在短窗口内学习如何留下有用的信息，再在更长的推理过程中不断使用这一能力。由此，训练窗口的长度不必直接决定推理能够延续的时间。</p>
-<p>从长视频走向可交互世界，还需要让这种能力承载动作、状态和环境变化。用户采取行动，模型生成结果，并将结果写入历史，作为下一次交互的条件。随着这一过程不断重复，世界需要保持空间关系、物体身份和行动后果的一致。</p>
-<p>这也为未来系统提出了一种设计方向：让历史写入负责保留关键状态，让生成模型负责响应当前输入，通过共同目标学习两者的协作。<strong>无限外推的愿景，是用有限的训练与计算，支撑不断展开的世界。</strong></p>
+<h2 id="迈向无限外推的视频生成">迈向无限外推的视频生成</h2>
+<p><strong>训练窗口是有限的，交互过程却没有预定的结束时间。</strong> 用户可能连续几分钟甚至几个小时调整镜头、改变内容，视频模型需要不断响应，同时让新的画面与此前的生成保持连贯。长程生成能力因此成为实时交互视频的一项基础。</p>
+<p>SGF 与 SGF+ 探索了短窗口训练支持长程外推的一种可能：模型在有限窗口内学习如何构建有助于未来预测的历史表征，再在更长的推理过程中反复使用这一机制。训练能够直接覆盖的时间范围，不必成为视频推理时长的边界。</p>
+<p>走向更长、乃至无限外推，还需要让生成质量、交互响应与运行成本同时成立。新的输入应当及时影响后续画面，主体、场景与运动也需要保持连贯。随着推理不断延长，模型需要在有限缓存中保留关键历史，并以可承受的计算开销持续运行。</p>
+<p>这将为数字人、交互创作和实时视频应用打开更大的空间。用户可以边观看边调整，生成无需在预设的片段结尾停止。<strong>流式视频生成的未来，是迈向无限外推：从有限的训练窗口出发，突破生成的时间边界，开启永不落幕的视觉体验。</strong></p>
 <h2 id="references">参考文献</h2>
 <div class="refs"><ol><li id="ref-1">Su, Z., Zhuang, J., Li, Y., et al. <em>SGF+: Decoupling Gradient Flows for Autoregressive Video Generation.</em> arXiv:2610.10429v2, 2026. <a href="https://arxiv.org/abs/2610.10429v2">https://arxiv.org/abs/2610.10429v2</a></li>
 <li id="ref-2">Huang, X., Li, Z., He, G., Zhou, M., and Shechtman, E. <em>Self Forcing: Bridging the Train-Test Gap in Autoregressive Video Diffusion.</em> arXiv:2506.08009, 2025. <a href="https://arxiv.org/abs/2506.08009">https://arxiv.org/abs/2506.08009</a></li>
@@ -78,21 +77,14 @@
 <li id="ref-16">Lightricks. <em>LTX-2.5.</em> Official model card, 2026. <a href="https://huggingface.co/Lightricks/LTX-2.5">https://huggingface.co/Lightricks/LTX-2.5</a></li></ol></div>
 <h2 id="cite">引用</h2>
 <div class="bib"><button type="button" class="bib-copy" data-copy>复制</button>
-<pre><code>@article{su2026sgf+,
-  title={SGF+: Decoupling Gradient Flows for Autoregressive Video Generation},
-  author={Su, Zihan and Zhuang, Junhao and Li, Yaowei and Lu, Siwen and Li, Haoran and Li, Lingen and Wu, Haoyu and Jin, Weiyang and Zhang, Songchun and Huang, Haoyang and others},
-  journal={arXiv preprint arXiv:2610.10429},
-  year={2026}
-}
-
-@article{zhuang2026self,
-  title   = {Self Gradient Forcing: Native Long Video Extrapolation},
-  author  = {Zhuang, Junhao and Zhang, Shiyi and Bian, Yuxuan
-             and Li, Yaowei and Luo, Yawen and Liu, Yijun
-             and Jin, Weiyang and Zhang, Songchun and He, Xianglong
-             and Zhang, Xuying and others},
-  journal = {arXiv preprint arXiv:2607.20368},
-  year    = {2026}
+<pre><code>@misc{su2026streamingvideo,
+  author       = {Su, Zihan},
+  title        = {Streaming Video Generation: Past and Future},
+  year         = {2026},
+  month        = oct,
+  howpublished = {Blog post},
+  url          = {https://zihan-su.github.io/blog/sgf-plus/index.html},
+  note         = {October 19, 2026}
 }</code></pre></div>
 </article>
 <footer class="credit">版式参考了 <a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Thinking Machines Lab</a> 的研究笔记，谨此致谢。</footer>
