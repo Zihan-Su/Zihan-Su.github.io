@@ -71,3 +71,12 @@ html[lang="en"] .memory-flow figcaption { transform: translateX(-.125em); }
   html[lang="en"] .flow-return { margin-right: 2em; }
   html[lang="en"] .memory-flow figcaption { transform: none; }
 }
+
+/* Keep the roadmap and LTX heatmap narrower than the article text. */
+.roadmap,
+.panels:has(img[src="assets/ltx25/ltx25_gradient_conflict_edited.png"]) {
+  width: 50%;
+  box-sizing: border-box;
+  margin-inline: auto;
+}
+.roadmap { width: 85%; }
