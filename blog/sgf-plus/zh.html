@@ -81,7 +81,7 @@
 <p>为了实现这一梯度路径，SGF 将训练分为两遍。第一遍执行无梯度 rollout，记录生成画面与选定退出步的输入。第二遍通过因果掩码并行重建历史 KV 与当前预测，并匹配 rollout 的注意力和位置关系。生成画面与采样轨迹保持停止梯度，构建历史 KV 的计算则参与反向传播。这样既保留模型实际遇到的历史，又避免为完整串行采样过程保留反向计算图。</p>
 <p>SGF 在短窗口内学习如何构建有助于未来预测的历史表征，并在更长的推理过程中反复使用这一写入机制。论文在相同初始化、五秒训练窗口和缓存协议下比较 SF 与 SGF：短视频表现整体相近，60 秒与 240 秒的多数质量和一致性指标得到改善。<strong>这些对照实验表明，更充分地训练历史表征的构建，就能显著改善长程外推，无需延长训练窗口、增加训练数据、额外设计 KV cache，或引入新的损失函数。</strong></p>
 <p>恢复历史写入的梯度后，SGF 改善了长时间生成的一致性，但也出现了一个现象：少量样例中，SGF 的首帧相比 SF 出现了轻微模糊。</p>
-<figure><div class="panels panels-1"><a href="assets/sf_sgf_quality_consistency_annotated.webp?v=standard-font-centered-20261020" target="_blank"><img src="assets/sf_sgf_quality_consistency_annotated.webp?v=standard-font-centered-20261020" alt="SF 与 SGF 的视觉质量和时序一致性对比。左侧样例中，SF 的棒球手套和草地细节比 SGF 更加锐利，视觉质量更高。右侧样例中，SGF 比 SF 保持了更好的时序一致性，误差累积更少。" loading="lazy"></a></div><figcaption>SF 与 SGF 的视觉质量和时序一致性对比。左侧样例中，SF 的棒球手套和草地细节比 SGF 更加锐利，视觉质量更高。右侧样例中，SGF 比 SF 保持了更好的时序一致性，误差累积更少。</figcaption></figure>
+<figure><div class="panels panels-1"><a href="assets/sf_sgf_quality_consistency_annotated.webp?v=e6da13ba02" target="_blank"><img src="assets/sf_sgf_quality_consistency_annotated.webp?v=e6da13ba02" alt="SF 与 SGF 的视觉质量和时序一致性对比。左侧样例中，SF 的棒球手套和草地细节比 SGF 更加锐利，视觉质量更高。右侧样例中，SGF 比 SF 保持了更好的时序一致性，误差累积更少。" loading="lazy"></a></div><figcaption>SF 与 SGF 的视觉质量和时序一致性对比。左侧样例中，SF 的棒球手套和草地细节比 SGF 更加锐利，视觉质量更高。右侧样例中，SGF 比 SF 保持了更好的时序一致性，误差累积更少。</figcaption></figure>
 <p>首帧还没有历史视频 KV 可以读取，它的质量变化提供了一个线索：<strong>用于学习历史表征的梯度，是否会与当前画面去噪的梯度相互干扰？</strong></p>
 <p>式（2）中的两种计算共享参数。因此，恢复历史写入的梯度后，参数更新同时受到上下文写入与当前去噪的影响。将同一生成损失沿这两条路径产生的梯度贡献分别记为 \(g_{\mathrm{context}}\) 和 \(g_{\mathrm{denoise}}\)，它们共同构成共享参数的梯度，其方向关系可以用余弦相似度衡量：</p>
 <div class="math-block">\[
