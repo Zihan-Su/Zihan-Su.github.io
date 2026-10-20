@@ -4,7 +4,7 @@
 <link rel="alternate" hreflang="zh-Hans" href="index.html"><link rel="alternate" hreflang="en" href="en.html">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Source+Sans+3:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
-<link rel="stylesheet" href="css/blog.css"><link rel="stylesheet" href="blog.css?v=roadmap85-ltx50">
+<link rel="stylesheet" href="css/blog.css"><link rel="stylesheet" href="blog.css?v=roadmap85-ltx50-forcing90">
 </head><body><div class="shell"><nav class="toc" aria-label="目录"><p class="toc-k">目录</p><ol><li><a href="#从视频生成到实时交互">从视频生成到实时交互</a></li>
 <li><a href="#走向更好-更长的生成">走向更好、更长的生成</a></li>
 <li><a href="#让未来损失监督历史的学习">让未来损失监督历史的学习</a></li>
@@ -16,11 +16,14 @@
 <article><h1 id="top">流式视频生成：从过去到未来</h1><p class="byline">Zihan Su, Junhao Zhuang, Weiyang Jin, Zeyue Xue</p><h2 id="从视频生成到实时交互">从视频生成到实时交互</h2>
 <p>在实时交互视频生成中，接下来的画面随着用户输入逐步确定。用户调整镜头方向，模型需要生成新的视角；用户改变提示词，后续画面需要响应新的内容。只要交互还在继续，生成就需要继续。这要求模型根据已有画面和新的输入，及时生成下一步。</p>
 <p>CausVid <a class="cite" href="#ref-10">10</a> 是这条路线的重要起点之一。双向视频扩散在整段视频上联合去噪，当前画面可以借助未来信息；因果生成则把计算沿时间展开，让模型依靠过去生成当前。CausVid 将双向教师的能力蒸馏到少步因果学生中，并通过 KV cache 复用历史计算，把高质量视频模型带向流式输出。</p>
-<p>下图展示了两种生成方式的区别：双向扩散联合完成整段视频的去噪，因果流式生成则依次完成并输出视频片段。</p>
-<figure><div class="panels panels-1"><a href="assets/bidirectional_vs_streaming.png" target="_blank"><img src="assets/bidirectional_vs_streaming.png" alt="双向扩散与因果流式生成。横轴表示视频时间，纵轴表示生成推进过程；绿色对勾标记新完成、可输出的片段。" loading="lazy"></a></div><figcaption>双向扩散与因果流式生成。横轴表示视频时间，纵轴表示生成推进过程；绿色对勾标记新完成、可输出的片段。</figcaption></figure>
-<p>从逐段输出走向高效交互，还需要解决训练与效率两个问题：怎样组织历史与当前内容，让模型学会接着过去的内容预测；怎样减少每一步的去噪计算，让生成跟上交互。</p>
+<p>将视频生成沿时间展开之后，模型需要反复根据已有内容预测下一步。这个过程与语言模型的自回归生成相似，但两者存在两个重要区别：<strong>生成内容所在的空间，以及每一步推理的计算方式。</strong></p>
+<figure><div class="panels panels-1"><a href="assets/llm-vs-video.svg" target="_blank"><img src="assets/llm-vs-video.svg" alt="语言与视频的两种自回归计算方式" loading="lazy"></a></div><figcaption>语言与视频的两种自回归计算方式：离散词表与连续视觉空间，以及单次前向预测与去噪、历史写入两类前向计算。</figcaption></figure>
+<p><strong>首先是离散空间与连续空间的区别。</strong> 语言模型从有限词表中选择下一个 token，输出受到离散候选集合的约束。视频扩散则在连续空间中生成视觉内容，没有这样的词表约束。细微的外观、结构或运动偏差，都可能随着生成结果进入下一步的条件，并在反复预测中累积，使画面逐渐漂移。</p>
+<p><strong>其次是推理计算的区别。</strong> 语言模型在每一步的一次 forward 中，同时构建当前 token 的 KV，并输出下一 token 的预测分布。自回归视频扩散则交替执行两类 forward：在 \(t&gt;0\) 时对带噪输入进行去噪，在 \(t=0\) 时将生成的干净画面写成历史 KV。去噪可能需要多次 forward，而历史写入为下一步生成准备条件。</p>
+<p><strong>视频模型的输出不仅需要成为一张好的画面，还会成为后续生成所依赖的历史。</strong> 这让当前预测的质量与之后的生成紧密联系起来。</p>
+<p>这些特点带来了训练与效率两个问题：怎样组织历史与当前内容，让模型学会接着过去预测；怎样减少每一步的去噪计算，让生成跟上交互。</p>
 <p>Teacher Forcing 从真实历史出发训练后续预测。Diffusion Forcing <a class="cite" href="#ref-8">8</a> 则进一步允许不同位置拥有不同的噪声水平，使序列预测与扩散去噪能够在同一个框架中组织。少步蒸馏解决的是另一个实际问题：即使模型能够按顺序输出，每一步仍然需要足够快，才能接上用户的交互。</p>
-<p><strong>流式生成把视频组织成了一个反复执行的预测过程。每一次预测，都在为下一次预测创造条件。</strong> 随之而来的问题是，训练时使用的历史与实际运行时可能并不相同：Teacher Forcing 提供真实视频中的历史，自回归生成时，模型却需要依赖自己此前的输出。即使每一步只有细微偏差，这些偏差也会进入后续预测的条件，导致误差随着生成不断累积。</p>
+<p>训练时使用怎样的历史，尤其重要。Teacher Forcing 提供真实视频中的历史，而推理时，模型面对的是自己此前的输出。真实历史上的预测能力，不能直接代替在自身输出上继续生成的能力。</p>
 <p>因此，在真实历史上学会预测，并不意味着模型能够接着自己的输出继续生成。Self Forcing <a class="cite" href="#ref-2">2</a> 将模型自己生成的历史引入训练：模型通过带 KV cache 的 rollout，接着此前生成的内容继续预测，并接受视频级分布匹配监督。TF 与 SF 都学习根据历史预测当前内容，区别在于训练时使用谁的历史：</p>
 <div class="math-block">\[
 \begin{aligned}
@@ -29,9 +32,13 @@
 \end{aligned}
 \tag{1}
 \]</div>
-<p>其中，\(i\) 表示当前帧或视频块，\(z_i^t\) 是带噪输入，\(\hat{x}_i\) 表示预测的干净内容。两行公式的关键区别在条件项：真实历史 \(x_{&lt;i}^{\mathrm{data}}\) 被替换为模型自身生成的历史 \(\hat{x}_{&lt;i}\)。模型因此能够在训练中面对自身输出带来的偏差，学习在这些条件下继续生成。</p>
+<p>其中，\(i\) 表示当前帧或视频块，\(z_i^t\) 是带噪输入，\(\hat{x}_i\) 表示预测的干净内容。两行公式的关键区别在条件项：真实历史 \(x_{&lt;i}^{\mathrm{data}}\) 被替换为模型自身生成的历史 \(\hat{x}_{&lt;i}\)。</p>
+<p>这一变化也可以从生成轨迹来理解。模型的每次预测都会改变下一步的条件，局部偏差因此可能随着自回归过程逐渐累积。Self Forcing 让训练沿模型自身产生的历史展开，使监督能够覆盖这些实际生成过程中出现的偏差。</p>
+<figure><div class="panels panels-1"><a href="assets/self-forcing.svg?v=ba99f75bcd" target="_blank"><img src="assets/self-forcing.svg?v=ba99f75bcd" alt="Self Forcing 的训练动力学示意" loading="lazy"></a></div><figcaption>Self Forcing 的训练动力学示意。模型通过 rollout 产生自生成轨迹，视频级 DMD 更新模型参数，再由更新后的模型生成新的轨迹。</figcaption></figure>
+<p>图中的两条曲线示意模型更新前后的生成轨迹。模型先完成自回归 rollout，再通过视频级 DMD 更新参数，随后由更新后的模型重新生成。橙色箭头表示这一训练更新的作用：它改变了模型沿自身历史继续预测的方式，使新的生成轨迹更接近目标视频分布。</p>
+<p><strong>模型会遇到怎样的历史，本身就取决于模型此前的输出。</strong> Self Forcing 将这种反馈关系纳入训练，让模型在自己实际产生的条件下学习后续预测。图中的“牵引”因此发生在参数学习中，推理时仍然由模型自行逐步生成。</p>
 <h2 id="走向更好-更长的生成">走向更好、更长的生成</h2>
-<p>Self Forcing 之后，自回归视频生成的瓶颈开始分化：学生从怎样的模型起步，短窗口监督怎样覆盖长过程，有限上下文又该如何支持更长的推理？</p>
+<p>Self Forcing 将自生成历史纳入训练之后，自回归视频生成仍面临几个问题：学生从怎样的模型起步，短窗口监督怎样覆盖长过程，有限上下文又该如何支持更长的推理？</p>
 <p><strong>学生模型需要一个怎样的初始化？</strong> Causal Forcing <a class="cite" href="#ref-11">11</a> 关注的正是这个问题。在少步模型的 ODE 初始化中，双向教师可以利用未来信息，因果学生却只能看到过去和当前输入。如果回归目标依赖学生看不到的内容，同一个可见输入就可能对应不同的目标。Causal Forcing 因此使用自回归教师进行 ODE 初始化，让回归目标与学生能够访问的信息相适应，再进行 Self Forcing 的分布匹配训练。</p>
 <p>Causal Forcing++ <a class="cite" href="#ref-12">12</a> 进一步推进逐帧的 1–2 步生成，通过 causal consistency distillation，利用相邻时间步的在线教师监督学习少步初始化，减少完整 ODE 轨迹的预计算与存储。更少的采样步骤和更细的输出粒度，共同缩短了交互中的等待。</p>
 <p>初始化改善了模型的训练起点，但要让视频生成得更长，还需要处理训练时长与推理时长之间的差距。训练窗口时长有限，因为直接延长训练窗口会增加时空 token 和中间状态的数量，带来更高的显存占用与计算开销，并且双向教师模型也只能在短视频上提供可靠的监督。而实际交互却可能持续几分钟甚至几个小时，远超训练能够直接覆盖的时间范围。</p>
