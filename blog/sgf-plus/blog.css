@@ -5,7 +5,7 @@ figure { margin: 1.7rem 0 1.9rem; }
 .panels-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .panels a { display: block; min-width: 0; }
 figure img { display: block; width: 100%; height: auto; background: white; }
-.panels:has(img[src="assets/llm-vs-video.svg"]),
+.panels:has(img[src^="assets/llm-vs-video.svg"]),
 .panels:has(img[src^="assets/self-forcing.svg"]) {
   width: 90%;
   margin-inline: auto;

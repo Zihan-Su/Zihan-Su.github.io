@@ -4,7 +4,7 @@
 <link rel="alternate" hreflang="zh-Hans" href="index.html"><link rel="alternate" hreflang="en" href="en.html">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Source+Sans+3:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
-<link rel="stylesheet" href="css/blog.css"><link rel="stylesheet" href="blog.css?v=roadmap85-ltx50-forcing90">
+<link rel="stylesheet" href="css/blog.css"><link rel="stylesheet" href="blog.css?v=roadmap85-ltx50-forcing90-comic">
 </head><body><div class="shell"><nav class="toc" aria-label="目录"><p class="toc-k">目录</p><ol><li><a href="#从视频生成到实时交互">从视频生成到实时交互</a></li>
 <li><a href="#走向更好-更长的生成">走向更好、更长的生成</a></li>
 <li><a href="#让未来损失监督历史的学习">让未来损失监督历史的学习</a></li>
@@ -12,12 +12,12 @@
 <li><a href="#迈向无限外推的视频生成">迈向无限外推的视频生成</a></li>
 <li><a href="#references">参考文献</a></li>
 <li><a href="#cite">引用</a></li></ol></nav><main class="page">
-<header class="mast"><p class="date">2026年10月19日</p><nav class="lang"><a class="" href="en.html" lang="en">English</a><a class="on" href="index.html" lang="zh-Hans">中文</a></nav></header>
+<header class="mast"><p class="date">2026年10月20日</p><nav class="lang"><a class="" href="en.html" lang="en">English</a><a class="on" href="index.html" lang="zh-Hans">中文</a></nav></header>
 <article><h1 id="top">流式视频生成：从过去到未来</h1><p class="byline">Zihan Su, Junhao Zhuang, Weiyang Jin, Zeyue Xue</p><h2 id="从视频生成到实时交互">从视频生成到实时交互</h2>
 <p>在实时交互视频生成中，接下来的画面随着用户输入逐步确定。用户调整镜头方向，模型需要生成新的视角；用户改变提示词，后续画面需要响应新的内容。只要交互还在继续，生成就需要继续。这要求模型根据已有画面和新的输入，及时生成下一步。</p>
 <p>CausVid <a class="cite" href="#ref-10">10</a> 是这条路线的重要起点之一。双向视频扩散在整段视频上联合去噪，当前画面可以借助未来信息；因果生成则把计算沿时间展开，让模型依靠过去生成当前。CausVid 将双向教师的能力蒸馏到少步因果学生中，并通过 KV cache 复用历史计算，把高质量视频模型带向流式输出。</p>
 <p>将视频生成沿时间展开之后，模型需要反复根据已有内容预测下一步。这个过程与语言模型的自回归生成相似，但两者存在两个重要区别：<strong>生成内容所在的空间，以及每一步推理的计算方式。</strong></p>
-<figure><div class="panels panels-1"><a href="assets/llm-vs-video.svg" target="_blank"><img src="assets/llm-vs-video.svg" alt="语言与视频的两种自回归计算方式" loading="lazy"></a></div><figcaption>语言与视频的两种自回归计算方式：离散词表与连续视觉空间，以及单次前向预测与去噪、历史写入两类前向计算。</figcaption></figure>
+<figure><div class="panels panels-1"><a href="assets/llm-vs-video.svg?v=139ea2ebff" target="_blank"><img src="assets/llm-vs-video.svg?v=139ea2ebff" alt="语言与视频的两种自回归计算方式" loading="lazy"></a></div><figcaption>语言与视频的两种自回归计算方式：离散词表与连续视觉空间，以及单次前向预测与去噪、历史写入两类前向计算。</figcaption></figure>
 <p><strong>首先是离散空间与连续空间的区别。</strong> 语言模型从有限词表中选择下一个 token，输出受到离散候选集合的约束。视频扩散则在连续空间中生成视觉内容，没有这样的词表约束。细微的外观、结构或运动偏差，都可能随着生成结果进入下一步的条件，并在反复预测中累积，使画面逐渐漂移。</p>
 <p><strong>其次是推理计算的区别。</strong> 语言模型在每一步的一次 forward 中，同时构建当前 token 的 KV，并输出下一 token 的预测分布。自回归视频扩散则交替执行两类 forward：在 \(t&gt;0\) 时对带噪输入进行去噪，在 \(t=0\) 时将生成的干净画面写成历史 KV。去噪可能需要多次 forward，而历史写入为下一步生成准备条件。</p>
 <p><strong>视频模型的输出不仅需要成为一张好的画面，还会成为后续生成所依赖的历史。</strong> 这让当前预测的质量与之后的生成紧密联系起来。</p>
@@ -34,7 +34,7 @@
 \]</div>
 <p>其中，\(i\) 表示当前帧或视频块，\(z_i^t\) 是带噪输入，\(\hat{x}_i\) 表示预测的干净内容。两行公式的关键区别在条件项：真实历史 \(x_{&lt;i}^{\mathrm{data}}\) 被替换为模型自身生成的历史 \(\hat{x}_{&lt;i}\)。</p>
 <p>这一变化也可以从生成轨迹来理解。模型的每次预测都会改变下一步的条件，局部偏差因此可能随着自回归过程逐渐累积。Self Forcing 让训练沿模型自身产生的历史展开，使监督能够覆盖这些实际生成过程中出现的偏差。</p>
-<figure><div class="panels panels-1"><a href="assets/self-forcing.svg?v=ba99f75bcd" target="_blank"><img src="assets/self-forcing.svg?v=ba99f75bcd" alt="Self Forcing 的训练动力学示意" loading="lazy"></a></div><figcaption>Self Forcing 的训练动力学示意。模型通过 rollout 产生自生成轨迹，视频级 DMD 更新模型参数，再由更新后的模型生成新的轨迹。</figcaption></figure>
+<figure><div class="panels panels-1"><a href="assets/self-forcing.svg?v=e79ade3354" target="_blank"><img src="assets/self-forcing.svg?v=e79ade3354" alt="Self Forcing 的训练动力学示意" loading="lazy"></a></div><figcaption>Self Forcing 的训练动力学示意。模型通过 rollout 产生自生成轨迹，视频级 DMD 更新模型参数，再由更新后的模型生成新的轨迹。</figcaption></figure>
 <p>图中的两条曲线示意模型更新前后的生成轨迹。模型先完成自回归 rollout，再通过视频级 DMD 更新参数，随后由更新后的模型重新生成。橙色箭头表示这一训练更新的作用：它改变了模型沿自身历史继续预测的方式，使新的生成轨迹更接近目标视频分布。</p>
 <p><strong>模型会遇到怎样的历史，本身就取决于模型此前的输出。</strong> Self Forcing 将这种反馈关系纳入训练，让模型在自己实际产生的条件下学习后续预测。图中的“牵引”因此发生在参数学习中，推理时仍然由模型自行逐步生成。</p>
 <h2 id="走向更好-更长的生成">走向更好、更长的生成</h2>
@@ -73,7 +73,9 @@
 <p>\(\operatorname{sg}\) 表示停止梯度。SF 将整个 KV 构建过程放在停止梯度的范围内；SGF 则只固定已经生成的画面，让构建 KV 的计算继续参与学习。这样，同样一段历史就能根据后续预测的需要，被编码为更有用的表征。</p>
 <p>为了实现这一梯度路径，SGF 将训练分为两遍。第一遍执行无梯度 rollout，记录生成画面与选定退出步的输入。第二遍通过因果掩码并行重建历史 KV 与当前预测。生成画面保持停止梯度，构建历史 KV 的计算则参与反向传播。</p>
 <p>SGF 在短窗口内学习如何构建有助于未来预测的历史表征，并在更长的推理过程中反复使用这一写入机制。在推理时长超越训练时长时，SGF 显著改善了长程一致性。</p>
-<p>恢复历史写入的梯度后，SGF 改善了长时间生成的一致性，但也出现了一个现象：部分样例中，SGF 的首帧相比 SF 出现了轻微模糊。首帧还没有历史视频 KV 可以读取，它的质量变化提供了一个线索：<strong>用于学习历史表征的梯度，是否会与当前画面去噪的梯度相互干扰？</strong></p>
+<p>恢复历史写入的梯度后，SGF 改善了长时间生成的一致性，但也出现了一个现象：部分样例中，SGF 的首帧相比 SF 出现了轻微模糊。</p>
+<figure><div class="panels panels-1"><a href="assets/sf_sgf_quality_consistency.png" target="_blank"><img src="assets/sf_sgf_quality_consistency.png" alt="SF 与 SGF 的视觉质量和时序一致性对比。左侧样例中，SF 的棒球手套和草地细节比 SGF 更加锐利，视觉质量更高。右侧样例中，SGF 比 SF 保持了更好的时序一致性，误差累积更少。" loading="lazy"></a></div><figcaption>SF 与 SGF 的视觉质量和时序一致性对比。左侧样例中，SF 的棒球手套和草地细节比 SGF 更加锐利，视觉质量更高。右侧样例中，SGF 比 SF 保持了更好的时序一致性，误差累积更少。</figcaption></figure>
+<p>首帧还没有历史视频 KV 可以读取，它的质量变化提供了一个线索：<strong>用于学习历史表征的梯度，是否会与当前画面去噪的梯度相互干扰？</strong></p>
 <p>式（2）中的两种计算共享参数。因此，恢复历史写入的梯度后，参数更新同时受到上下文写入与当前去噪的影响。将两种梯度贡献分别记为 \(g_{\mathrm{context}}\) 和 \(g_{\mathrm{denoise}}\)，它们共同构成共享参数的梯度，其方向关系可以用余弦相似度衡量：</p>
 <div class="math-block">\[
 \begin{aligned}

@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941" viewBox="0 0 1672 941" role="img" aria-labelledby="title desc">
 <title id="title">Self Forcing</title>
-<desc id="desc">Faithful editable vector reconstruction of the reference. A blue-green video distribution surrounds an updated trajectory. A coral trajectory before training drifts down and right. Four gold dashed arrows connect corresponding pre-update and post-update samples under video-level DMD. The bottom training cycle reads Roll out, Update theta, Sample again.</desc>
+<desc id="desc">Faithful editable vector reconstruction of the reference. A blue-green video distribution surrounds an open, bounded after-training trajectory. An irregular coral trajectory before training spirals outward. Four gold dashed arrows connect corresponding pre-update and post-update samples under video-level DMD. The bottom training cycle reads Roll out, Video-level DMD with the theta-to-theta-prime update, Sample again.</desc>
 <defs>
   <filter id="density-soften" x="-8%" y="-12%" width="116%" height="124%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="5.2"/></filter>
   <linearGradient id="navy-point" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#125366"/><stop offset="1" stop-color="#00354b"/></linearGradient>
   <linearGradient id="coral-point" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff967a"/><stop offset="1" stop-color="#ff5f4e"/></linearGradient>
   <linearGradient id="gold-arrow" x1="0" y1="1" x2="0" y2="0"><stop stop-color="#e9b24c"/><stop offset="1" stop-color="#f8ce77"/></linearGradient>
-  <style>text{font-family:'Avenir Next','Avenir','Arial',sans-serif} .main-label{font-size:31px;font-weight:500} .math{font-family:'Times New Roman',serif;font-style:italic}</style>
+  <style>text{font-family:'Comic Sans MS',cursive} .main-label{font-size:31px;font-weight:500} .math{font-family:'Comic Sans MS',cursive;font-style:italic}</style>
   <marker id="dmd-gold-tip" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" viewBox="0 0 12 12" refX="10" refY="6" orient="auto"><path d="M0 1 L10 6 L0 11 L2.5 6 Z" fill="#f3c269"/></marker>
 </defs>
 <rect id="background" width="1672" height="941" fill="#ffffff"/>
@@ -56,48 +56,63 @@
 <path id="distribution-contour-43" fill="#025f6b" d="M 502.8,406.7 C 498.8,408.4 490.8,412.0 486.8,414.7 C 482.8,417.3 480.8,420.0 478.9,422.7 C 476.9,425.3 475.5,428.6 474.9,430.6 C 474.2,432.6 474.2,433.3 474.9,434.6 C 475.5,435.9 478.2,437.3 478.9,438.6 C 479.5,439.9 476.9,441.9 478.9,442.6 C 480.8,443.3 488.2,441.9 490.8,442.6 C 493.5,443.3 490.8,445.9 494.8,446.6 C 498.8,447.2 510.8,447.2 514.8,446.6 C 518.8,445.9 516.1,443.3 518.8,442.6 C 521.4,441.9 527.4,441.9 530.7,442.6 C 534.1,443.3 537.0,445.2 538.7,446.6 C 540.4,447.9 539.4,449.2 540.7,450.6 C 542.0,451.9 543.7,453.7 546.7,454.6 C 549.7,455.4 553.3,455.9 558.7,455.9 C 564.0,455.9 573.3,456.8 578.6,454.6 C 583.9,452.3 588.6,445.2 590.6,442.6 C 592.6,439.9 591.3,439.9 590.6,438.6 C 589.9,437.3 587.9,434.9 586.6,434.6 C 585.3,434.3 583.9,436.6 582.6,436.6 C 581.3,436.6 580.6,434.6 578.6,434.6 C 576.6,434.6 572.6,436.6 570.6,436.6 C 568.6,436.6 568.6,434.9 566.6,434.6 C 564.6,434.3 560.7,435.3 558.7,434.6 C 556.7,433.9 556.7,431.6 554.7,430.6 C 552.7,429.6 548.7,430.0 546.7,428.6 C 544.7,427.3 543.4,425.0 542.7,422.7 C 542.0,420.3 544.0,417.3 542.7,414.7 C 541.4,412.0 537.4,408.4 534.7,406.7 C 532.1,405.0 530.7,405.0 526.7,404.7 C 522.7,404.4 514.8,404.4 510.8,404.7 C 506.8,405.0 506.8,405.0 502.8,406.7 Z"/>
 </g>
 <g id="title-and-distribution-label" fill="#04364a">
-  <text id="self-forcing-title" x="840" y="94" text-anchor="middle" font-size="87" font-weight="700" textLength="497" lengthAdjust="spacingAndGlyphs">Self Forcing</text>
+  <g transform="translate(840 0) scale(0.962871 1)"><text id="self-forcing-title" x="0" y="90" text-anchor="middle" font-size="68" font-weight="700">Self Forcing</text></g>
 </g>
 <g id="dmd-dashed-arrows" fill="none" stroke="url(#gold-arrow)" stroke-width="2.3" stroke-linecap="round" stroke-dasharray="6 5" marker-end="url(#dmd-gold-tip)">
-  <path id="dmd-arrow-1" data-source="before-sample-1" data-target="after-sample-1" d="M 598 513 C 590 475 594 438 605 408"/>
-  <path id="dmd-arrow-2" data-source="before-sample-2" data-target="after-sample-2" d="M 732 589 C 708 530 699 433 709 363"/>
-  <path id="dmd-arrow-3" data-source="before-sample-3" data-target="after-sample-3" d="M 1066 706 C 1005 630 862 486 835 382"/>
-  <path id="dmd-arrow-4" data-source="before-sample-4" data-target="after-sample-4" d="M 1411 751 C 1284 694 1024 530 947 385"/>
+  <path id="dmd-arrow-1" data-source="before-sample-1" data-target="after-sample-1" d="M 808.75 416.53 C 750.20 402.71 694.50 381.41 659.89 359.61"/>
+  <path id="dmd-arrow-2" data-source="before-sample-2" data-target="after-sample-2" d="M 624.98 607.35 C 596.88 565.19 576.06 519.70 570.06 487.38"/>
+  <path id="dmd-arrow-3" data-source="before-sample-3" data-target="after-sample-3" d="M 435.75 220.62 C 456.80 290.14 469.99 361.12 471.42 412.60"/>
+  <path id="dmd-arrow-4" data-source="before-sample-4" data-target="after-sample-4" d="M 1214.74 624.54 C 1016.23 554.44 820.67 476.90 666.23 407.05"/>
 </g>
 <g id="trajectory-before-training">
-  <path id="before-trajectory" fill="none" stroke="#ff8274" stroke-width="3.4" stroke-linecap="round" d="M 506 452 C 541 462 567 488 598 513 C 646 552 688 578 732 589 C 784 604 845 623 895 645 C 956 670 1008 694 1066 706 C 1183 735 1278 736 1411 751"/>
+  <path id="before-trajectory" fill="none" stroke="#ff8274" stroke-width="3.4" stroke-linecap="round" d="M 450.19 397.86 C 438.00 360.00 478.00 326.00 512.00 319.00 C 550.00 307.00 591.00 308.00 631.00 321.00 C 669.00 333.00 711.00 345.00 744.00 376.00 C 764.00 396.00 787.00 408.00 816.45 419.65 C 822.64 422.07 829.28 424.56 836.34 427.22 C 843.40 429.87 850.97 432.62 858.79 435.61 C 866.61 438.58 874.96 441.70 883.26 445.07 C 891.54 448.43 900.25 452.00 908.56 455.79 C 916.85 459.57 925.34 463.59 933.03 467.78 C 940.71 471.95 948.25 476.38 954.65 480.84 C 961.04 485.29 966.89 489.96 971.38 494.51 C 975.86 499.05 979.42 503.73 981.56 508.14 C 983.69 512.55 984.59 516.94 984.21 520.98 C 983.83 525.00 982.05 528.86 979.29 532.31 C 976.55 535.76 972.42 538.91 967.70 541.68 C 963.00 544.44 957.12 546.83 951.05 548.93 C 944.99 551.04 938.09 552.74 931.34 554.31 C 924.58 555.89 917.38 557.12 910.48 558.39 C 903.60 559.65 896.64 560.69 890.01 561.91 C 883.39 563.11 876.95 564.25 870.72 565.63 C 864.51 567.00 858.58 568.46 852.69 570.15 C 846.80 571.83 841.17 573.70 835.36 575.73 C 829.57 577.77 823.88 580.03 817.85 582.33 C 811.83 584.63 805.73 587.12 799.18 589.52 C 792.65 591.91 785.86 594.42 778.64 596.69 C 771.43 598.95 763.82 601.20 755.88 603.10 C 747.96 605.00 739.59 606.75 731.05 608.09 C 722.53 609.43 713.60 610.49 704.70 611.14 C 695.79 611.79 686.62 612.07 677.64 611.98 C 668.66 611.90 659.57 611.39 650.79 610.62 C 642.02 609.85 633.33 608.67 624.98 607.35 C 616.65 606.03 608.54 604.37 600.73 602.68 C 592.93 601.00 585.46 599.07 578.13 597.25 C 570.81 595.43 563.84 593.50 556.79 591.74 C 549.75 589.98 542.96 588.26 535.87 586.70 C 528.79 585.15 521.77 583.73 514.28 582.43 C 506.78 581.13 499.12 580.02 490.90 578.89 C 482.68 577.78 474.07 576.83 464.96 575.71 C 455.86 574.59 446.19 573.55 436.27 572.18 C 426.36 570.80 415.86 569.36 405.47 567.45 C 395.10 565.53 384.27 563.38 374.01 560.70 C 363.76 558.01 353.35 554.93 343.94 551.35 C 334.54 547.76 325.39 543.66 317.56 539.17 C 309.75 534.68 302.64 529.65 296.98 524.39 C 291.34 519.13 286.81 513.39 283.63 507.60 C 280.47 501.82 278.68 495.70 277.96 489.68 C 277.23 483.67 277.95 477.49 279.29 471.54 C 280.64 465.60 283.26 459.66 286.00 453.98 C 288.73 448.31 292.40 442.79 295.71 437.48 C 299.02 432.18 302.79 427.11 305.85 422.14 C 308.90 417.17 311.92 412.45 314.05 407.67 C 316.18 402.90 317.82 398.29 318.63 393.50 C 319.44 388.71 319.46 383.95 318.91 378.90 C 318.35 373.86 316.89 368.70 315.29 363.22 C 313.68 357.74 311.30 352.02 309.27 346.04 C 307.26 340.06 304.77 333.76 303.16 327.34 C 301.55 320.93 299.94 314.20 299.62 307.56 C 299.29 300.93 299.49 294.07 301.23 287.55 C 302.95 281.03 305.69 274.47 309.96 268.47 C 314.24 262.47 319.88 256.65 326.86 251.54 C 333.82 246.43 342.32 241.74 351.78 237.80 C 361.22 233.87 372.13 230.56 383.54 227.92 C 394.94 225.29 407.53 223.37 420.21 221.98 C 432.87 220.59 446.32 219.91 459.55 219.53 C 472.75 219.14 486.31 219.38 499.49 219.68 C 512.65 219.99 525.79 220.72 538.56 221.36 C 551.30 222.01 563.78 222.85 576.01 223.54 C 588.22 224.24 600.08 224.94 611.84 225.52 C 623.58 226.11 635.04 226.58 646.51 227.03 C 657.97 227.49 669.28 227.80 680.65 228.25 C 692.00 228.69 703.33 229.06 714.70 229.70 C 726.04 230.35 737.45 231.04 748.77 232.09 C 760.08 233.14 771.44 234.38 782.58 236.02 C 793.71 237.65 804.81 239.60 815.57 241.91 C 826.31 244.22 836.91 246.90 847.10 249.87 C 857.27 252.84 867.17 256.19 876.67 259.73 C 886.15 263.25 895.26 267.12 904.06 271.07 C 912.85 275.01 921.23 279.19 929.46 283.39 C 937.67 287.57 945.52 291.90 953.40 296.17 C 961.26 300.45 968.87 304.77 976.70 309.03 C 984.52 313.30 992.23 317.53 1000.34 321.74 C 1008.44 325.94 1016.62 330.08 1025.30 334.25 C 1033.96 338.41 1042.91 342.52 1052.36 346.74 C 1061.80 350.97 1071.67 355.17 1081.94 359.58 C 1092.19 364.00 1102.96 368.46 1113.90 373.24 C 1124.82 378.01 1136.24 382.93 1147.50 388.22 C 1158.74 393.49 1170.33 399.02 1181.35 404.93 C 1192.36 410.83 1203.46 417.07 1213.59 423.63 C 1223.71 430.20 1233.55 437.14 1242.12 444.32 C 1250.67 451.49 1258.54 459.03 1264.95 466.70 C 1271.34 474.36 1276.69 482.32 1280.53 490.28 C 1284.36 498.23 1286.88 506.38 1287.97 514.41 C 1289.07 522.44 1288.72 530.55 1287.13 538.47 C 1285.54 546.37 1282.52 554.24 1278.47 561.87 C 1274.43 569.49 1269.07 576.98 1262.88 584.20 C 1256.68 591.41 1249.36 598.44 1241.33 605.17 C 1233.31 611.89 1219.39 621.39 1214.74 624.54"/>
   <g fill="url(#coral-point)" stroke="#fff" stroke-width="1.35">
-    <circle id="before-sample-1" cx="598" cy="513" r="8.6"/>
-    <circle id="before-sample-2" cx="732" cy="589" r="8.6"/>
-    <circle id="before-sample-3" cx="1066" cy="706" r="8.7"/>
-    <circle id="before-sample-4" cx="1411" cy="751" r="11.7"/>
+    <circle id="before-sample-1" cx="808.75" cy="416.53" r="7.6"/>
+    <circle id="before-sample-2" cx="624.98" cy="607.35" r="7.6"/>
+    <circle id="before-sample-3" cx="435.75" cy="220.62" r="7.6"/>
+    <circle id="before-sample-4" cx="1214.74" cy="624.54" r="9"/>
+    <circle id="before-extra-2" cx="561.44" cy="310.68" r="6.1"/>
+    <circle id="before-extra-4" cx="728.00" cy="362.84" r="6.1"/>
+    <circle id="before-extra-7" cx="965.39" cy="489.00" r="6.1"/>
+    <circle id="before-extra-9" cx="867.03" cy="566.45" r="6.1"/>
+    <circle id="before-extra-12" cx="544.25" cy="588.63" r="6.1"/>
+    <circle id="before-extra-14" cx="293.71" cy="521.17" r="6.1"/>
+    <circle id="before-extra-16" cx="316.27" cy="366.47" r="6.1"/>
+    <circle id="before-extra-19" cx="618.85" cy="225.87" r="6.1"/>
+    <circle id="before-extra-20" cx="782.58" cy="236.02" r="6.1"/>
+    <circle id="before-extra-22" cx="1041.25" cy="341.73" r="6.1"/>
+    <circle id="before-extra-24" cx="1288.46" cy="519.25" r="6.1"/>
   </g>
-  <text id="before-label" x="1444" y="756" class="main-label" font-weight="600" textLength="198" lengthAdjust="spacingAndGlyphs" fill="#fa5f4a">Before training</text>
+  <g transform="translate(1245 0) scale(0.872247 1)"><text id="before-label" x="0" y="635" class="main-label" font-weight="600" fill="#fa5f4a">Before training</text></g>
 </g>
 <g id="trajectory-after-training">
-  <path id="after-trajectory" fill="none" stroke="#00465b" stroke-width="2.8" stroke-linecap="round" d="M 506 452 C 541 440 576 418 605 398 C 646 370 675 357 709 353 C 752 345 788 352 835 372 C 875 387 911 383 947 375"/>
+  <path id="after-trajectory" fill="none" stroke="#00465b" stroke-width="4" stroke-linecap="round" d="M 450.19 397.86 C 468.00 368.00 501.00 349.00 539.00 347.00 C 586.00 336.00 636.00 343.00 669.00 367.00 C 698.00 382.00 735.00 379.00 727.00 405.00 C 721.00 430.00 677.00 441.00 640.00 450.00 C 606.00 461.00 576.00 483.00 540.00 478.00 C 505.00 474.00 466.00 484.00 448.00 461.00 C 427.00 439.00 448.00 424.00 480.00 423.00 C 510.00 423.00 523.00 391.00 553.00 399.00 C 575.00 403.00 586.00 418.00 608.00 414.00 C 627.00 410.00 647.00 410.00 656.00 403.00"/>
   <g fill="url(#navy-point)" stroke="#a4e6e5" stroke-width="1.5">
-    <circle id="after-sample-1" cx="605" cy="398" r="8"/>
-    <circle id="after-sample-2" cx="709" cy="353" r="8.2"/>
-    <circle id="after-sample-3" cx="835" cy="372" r="8.2"/>
-    <circle id="after-sample-4" cx="947" cy="375" r="9.2"/>
+    <circle id="after-sample-1" cx="649.61" cy="355.68" r="7.6"/>
+    <circle id="after-sample-2" cx="565.48" cy="477.38" r="7.6"/>
+    <circle id="after-sample-3" cx="473.42" cy="423.42" r="7.6"/>
+    <circle id="after-sample-4" cx="656.00" cy="403.00" r="9"/>
+    <circle id="after-extra-3" cx="529.05" cy="347.92" r="5.5"/>
+    <circle id="after-extra-7" cx="706.01" cy="428.18" r="5.5"/>
+    <circle id="after-extra-10" cx="495.39" cy="476.88" r="5.5"/>
+    <circle id="after-extra-14" cx="571.61" cy="405.30" r="5.5"/>
   </g>
-  <circle id="shared-origin" cx="506" cy="452" r="8.1" fill="url(#navy-point)" stroke="#ffffff" stroke-width="2.6"/>
-  <text id="after-label" x="973" y="376" class="main-label" textLength="183" lengthAdjust="spacingAndGlyphs" fill="#00465c">After training</text>
-</g>
-<g id="video-level-dmd">
-  <text id="dmd-label" x="1330" y="500" text-anchor="middle" font-size="30" font-weight="600" textLength="233" lengthAdjust="spacingAndGlyphs" fill="#c3821b">Video-level DMD</text>
-  <text id="parameter-update" x="1330" y="543" text-anchor="middle" class="math" font-size="37" fill="#bc7b1c">θ → θ′</text>
+  <circle id="shared-origin" cx="450.19" cy="397.86" r="8.1" fill="url(#navy-point)" stroke="#ffffff" stroke-width="2.6"/>
+  <g transform="translate(595 0) scale(0.884058 1)"><text id="after-label" x="0" y="505" class="main-label" fill="#00465c">After training</text></g>
 </g>
 <g id="training-dynamics">
-  <g id="training-labels" fill="#07384e" font-size="33" font-weight="500">
-    <text id="roll-out" x="344" y="866" textLength="123" lengthAdjust="spacingAndGlyphs">Roll out</text>
-    <text id="update" x="768" y="866" textLength="138" lengthAdjust="spacingAndGlyphs">Update <tspan class="math" font-size="36">θ</tspan></text>
-    <text id="sample-again" x="1133" y="866" textLength="203" lengthAdjust="spacingAndGlyphs">Sample again</text>
+  <g id="training-labels" fill="#07384e" font-size="30" font-weight="500">
+    <g transform="translate(285 0) scale(1.160377 1)"><text id="roll-out" x="0" y="856">Roll out</text></g>
+    <g transform="translate(1170 0) scale(1.140449 1)"><text id="sample-again" x="0" y="856">Sample again</text></g>
   </g>
-  <g id="training-cycle-arrows" fill="none" stroke="#4d7b8e" stroke-width="1.9" stroke-linecap="square" stroke-linejoin="miter">
-    <path id="rollout-to-update" d="M 494 855.5 H 729 M 721 848 L 729 855.5 L 721 863"/>
-    <path id="update-to-sample" d="M 948 855.5 H 1103 M 1095 848 L 1103 855.5 L 1095 863"/>
+  <g id="video-level-dmd" fill="#c3821b" transform="translate(14.5 0)">
+    <g transform="translate(596 0) scale(0.971429 1)"><text id="dmd-label" x="0" y="856" font-size="30" font-weight="600">Video-level DMD</text></g>
+    <text id="dmd-separator" x="850" y="856" font-size="30">·</text>
+    <text id="parameter-update" x="877" y="859" class="math" font-size="35">θ → θ′</text>
+  </g>
+  <g id="training-cycle-arrows" fill="none" stroke="#4d7b8e" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter">
+    <path id="rollout-to-update" d="M 438 845 H 565 M 557 838 L 565 845 L 557 852"/>
+    <path id="update-to-sample" d="M 1032 845 H 1140 M 1132 838 L 1140 845 L 1132 852"/>
   </g>
 </g>
 </svg>

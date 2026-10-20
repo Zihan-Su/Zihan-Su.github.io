@@ -1548,28 +1548,28 @@
 <rect id="background" width="1672" height="941" fill="#ffffff"/>
 <g id="panel-dividers" fill="none" stroke="#dce7eb" stroke-width="1.6"><path d="M790 141V910"/></g>
 <g id="main-title">
-<text x="0" y="85" font-family="Arial, Helvetica, sans-serif" font-size="78" font-weight="700" fill="#062d3e" transform="translate(389 0) scale(0.847657 1)" >Two forms of autoregression</text>
+<text x="0" y="85" font-family="Comic Sans MS, cursive" font-size="78" font-weight="700" fill="#062d3e" transform="translate(389 0) scale(0.834400 1)" >Two forms of autoregression</text>
 </g><g id="language-model-heading">
-<text x="0" y="174" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" fill="#062d3e" transform="translate(46 0) scale(0.967302 1)" >Language model</text>
-<text x="0" y="222" font-family="Arial, Helvetica, sans-serif" font-size="37" font-weight="400" fill="#678796" transform="translate(47 0) scale(0.978799 1)" >Finite vocabulary</text>
+<text x="0" y="174" font-family="Comic Sans MS, cursive" font-size="46" font-weight="700" fill="#062d3e" transform="translate(46 0) scale(1.028985 1)" >Language model</text>
+<text x="0" y="222" font-family="Comic Sans MS, cursive" font-size="37" font-weight="400" fill="#678796" transform="translate(47 0) scale(0.951890 1)" >Finite vocabulary</text>
 </g><g id="vocabulary-tree">
 <rect x="100" y="323" width="113" height="63" rx="16" fill="url(#tokenGray)"/>
 <rect x="324" y="260" width="115" height="63" rx="17" fill="url(#tokenTeal)"/>
 <rect x="519" y="260" width="115" height="63" rx="17" fill="#dfebeb"/>
 <rect x="324" y="390" width="115" height="63" rx="17" fill="url(#tokenGold)"/>
 <rect x="519" y="390" width="115" height="63" rx="17" fill="#fbefd9"/>
-<text x="0" y="367" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="400" fill="#062d3e" transform="translate(157 0) scale(0.966102 1)" text-anchor="middle" >The</text>
-<text x="0" y="304" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="400" fill="#062d3e" transform="translate(382 0) scale(1.000000 1)" text-anchor="middle" >cat</text>
-<text x="0" y="304" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="400" fill="#062d3e" transform="translate(576 0) scale(1.000000 1)" text-anchor="middle" >sits</text>
-<text x="0" y="434" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="400" fill="#062d3e" transform="translate(382 0) scale(1.035088 1)" text-anchor="middle" >bird</text>
-<text x="0" y="434" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="400" fill="#062d3e" transform="translate(576 0) scale(0.934426 1)" text-anchor="middle" >flies</text>
+<text x="0" y="367" font-family="Comic Sans MS, cursive" font-size="34" font-weight="400" fill="#062d3e" transform="translate(157 0) scale(0.919355 1)" text-anchor="middle" >The</text>
+<text x="0" y="304" font-family="Comic Sans MS, cursive" font-size="34" font-weight="400" fill="#062d3e" transform="translate(382 0) scale(0.900000 1)" text-anchor="middle" >cat</text>
+<text x="0" y="304" font-family="Comic Sans MS, cursive" font-size="34" font-weight="400" fill="#062d3e" transform="translate(576 0) scale(0.850000 1)" text-anchor="middle" >sits</text>
+<text x="0" y="434" font-family="Comic Sans MS, cursive" font-size="34" font-weight="400" fill="#062d3e" transform="translate(382 0) scale(0.893940 1)" text-anchor="middle" >bird</text>
+<text x="0" y="434" font-family="Comic Sans MS, cursive" font-size="34" font-weight="400" fill="#062d3e" transform="translate(576 0) scale(0.791666 1)" text-anchor="middle" >flies</text>
 <path id="the-to-cat" d="M218 355 C244 351 252 337 265 315 C278 294 291 291 318 294" fill="none" stroke="#548e9a" stroke-width="2.5" marker-end="url(#lightArrow)"/>
 <path id="the-to-bird" d="M218 355 C245 361 253 375 265 396 C278 419 291 424 318 422" fill="none" stroke="#e6b15a" stroke-width="2.5" marker-end="url(#goldArrow)"/>
 <path id="cat-to-sits" d="M440 293 H513" fill="none" stroke="#548e9a" stroke-width="2.5" marker-end="url(#lightArrow)"/>
 <path id="bird-to-flies" d="M440 422 H513" fill="none" stroke="#e6b15a" stroke-width="2.5" marker-end="url(#goldArrow)"/>
 </g><g id="video-diffusion-heading">
-<text x="0" y="175" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" fill="#062d3e" transform="translate(857 0) scale(0.955000 1)" >Video diffusion</text>
-<text x="0" y="222" font-family="Arial, Helvetica, sans-serif" font-size="37" font-weight="400" fill="#678796" transform="translate(858 0) scale(0.965602 1)" >Continuous visual space</text>
+<text x="0" y="175" font-family="Comic Sans MS, cursive" font-size="46" font-weight="700" fill="#062d3e" transform="translate(857 0) scale(0.952096 1)" >Video diffusion</text>
+<text x="0" y="222" font-family="Comic Sans MS, cursive" font-size="37" font-weight="400" fill="#678796" transform="translate(858 0) scale(1.000000 1)" >Continuous visual space</text>
 </g><g id="continuous-latent-space" transform="translate(355 154) scale(.7)" filter="url(#softCloud)">
 <path d="M1000 344 C1003 299 1023 271 1056 265 C1093 259 1108 267 1139 248 C1171 228 1189 233 1213 236 C1253 237 1249 200 1270 168 C1286 143 1309 143 1336 151 C1360 161 1383 157 1410 165 C1450 178 1453 201 1439 236 C1431 257 1450 258 1487 260 C1531 262 1557 274 1577 298 C1598 323 1582 352 1561 372 C1543 393 1543 404 1551 425 C1568 473 1536 487 1506 477 C1482 469 1464 466 1436 484 C1404 509 1387 507 1360 493 C1324 472 1321 470 1288 484 C1240 504 1202 519 1167 508 C1129 499 1127 477 1102 463 C1068 444 1043 451 1021 426 C1001 402 996 371 1000 344Z" fill="url(#cloudBase)"/>
 <g filter="url(#softCloud)"><ellipse cx="1219" cy="371" rx="181" ry="123" fill="url(#cloudDark)"/><ellipse cx="1318" cy="276" rx="131" ry="145" fill="url(#cloudTop)" transform="rotate(25 1318 276)"/><ellipse cx="1439" cy="369" rx="152" ry="131" fill="url(#cloudRight)"/></g>
@@ -1597,11 +1597,11 @@
 <circle cx="1485" cy="229" r="3.8"/>
 <circle cx="1499" cy="222" r="3.8"/>
 <path d="M1503 210 L1523 214 L1510 229 L1507 218Z" fill="#ff8874"/>
-<text x="0" y="224" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#ff826d" transform="translate(1537 0) scale(1.028846 1)" >Error drift</text>
+<text x="0" y="224" font-family="Comic Sans MS, cursive" font-size="25" font-weight="400" fill="#ff826d" transform="translate(1537 0) scale(0.816794 1)" >Error drift</text>
 </g><g id="one-forward-heading">
-<text x="0" y="551" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#062d3e" transform="translate(47 0) scale(0.961538 1)" >One forward</text>
+<text x="0" y="551" font-family="Comic Sans MS, cursive" font-size="40" font-weight="700" fill="#062d3e" transform="translate(47 0) scale(0.922131 1)" >One forward</text>
 </g><g id="language-model-forward">
-<text x="0" y="653" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#062d3e" transform="translate(93 0) scale(0.935065 1)" >Past KV</text>
+<text x="0" y="653" font-family="Comic Sans MS, cursive" font-size="21" font-weight="400" fill="#062d3e" transform="translate(93 0) scale(0.960000 1)" >Past KV</text>
 <g id="past-kv-language" transform="translate(180 610) scale(1)">
 <path d="M18 20 H51 V78 H18Z" fill="#4e999f" fill-opacity=".29"/>
 <use href="#kv-layer" y="52"/>
@@ -1612,12 +1612,12 @@
 <use href="#kv-top"/>
 </g>
 <path id="language-past-kv-to-denoiser" d="M265 645 C300 646 318 640 318 668 V732" fill="none" stroke="#528b99" stroke-width="2.1" marker-end="url(#tealArrow)"/>
-<text x="0" y="749" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#062d3e" transform="translate(72 0) scale(0.933820 1)" >Token</text>
+<text x="0" y="749" font-family="Comic Sans MS, cursive" font-size="22" font-weight="400" fill="#062d3e" transform="translate(72 0) scale(0.888889 1)" >Token</text>
 <rect x="56" y="765" width="92" height="53" rx="13" fill="#cde4e2"/>
-<text x="0" y="801" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" fill="#062d3e" transform="translate(103 0) scale(0.972973 1)" text-anchor="middle" >cat</text>
+<text x="0" y="801" font-family="Comic Sans MS, cursive" font-size="27" font-weight="400" fill="#062d3e" transform="translate(103 0) scale(0.878049 1)" text-anchor="middle" >cat</text>
 <path id="language-token-to-denoiser" d="M154 792 H239" fill="none" stroke="#123f52" stroke-width="2.5" marker-end="url(#navyArrow)"/>
 <rect id="language-denoiser-module" x="243" y="738" width="148" height="109" rx="16" fill="url(#moduleGradient)" stroke="#2e636b" stroke-width="1.6"/>
-<text x="295" y="808" font-family="Georgia, Times New Roman, serif" font-size="44" font-weight="400" fill="#ffffff" font-style="italic">D<tspan baseline-shift="sub" font-size="27">θ</tspan></text>
+<text x="295" y="808" font-family="Comic Sans MS, cursive" font-size="44" font-weight="400" fill="#ffffff" font-style="italic">D<tspan baseline-shift="sub" font-size="27">θ</tspan></text>
 <path id="language-denoiser-to-current-kv" d="M393 773 C420 774 424 759 426 746 C430 725 444 724 471 725" fill="none" stroke="#0e4357" stroke-width="2.5" marker-end="url(#tealArrow)"/>
 <path id="language-denoiser-to-logits" d="M394 811 C420 810 424 823 427 833 C432 845 444 846 471 846" fill="none" stroke="#0e4357" stroke-width="2.5" marker-end="url(#tealArrow)"/>
 <g id="current-kv-language" transform="translate(478 682) scale(1)">
@@ -1629,13 +1629,13 @@
 <use href="#kv-layer" y="0"/>
 <use href="#kv-top"/>
 </g>
-<text x="0" y="719" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#062d3e" transform="translate(579 0) scale(0.973684 1)" >Current KV</text>
+<text x="0" y="719" font-family="Comic Sans MS, cursive" font-size="23" font-weight="400" fill="#062d3e" transform="translate(579 0) scale(0.925000 1)" >Current KV</text>
 <g id="next-token-logit-bars"><rect x="487" y="798" width="23" height="80" rx="2.5" fill="#79afb4"/><rect x="516" y="825" width="22" height="53" rx="2.5" fill="#bedcda"/><rect x="545" y="847" width="21" height="31" rx="2.5" fill="#ebbe71"/><rect x="573" y="861" width="22" height="17" rx="2.5" fill="#d2dfe3"/></g>
-<text x="0" y="834" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#062d3e" transform="translate(582 0) scale(0.971098 1)" >Next-token logits</text>
+<text x="0" y="834" font-family="Comic Sans MS, cursive" font-size="23" font-weight="400" fill="#062d3e" transform="translate(582 0) scale(0.879581 1)" >Next-token logits</text>
 </g><g id="shared-theta-heading">
-<text x="0" y="551" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#062d3e" transform="translate(843 0) scale(0.996732 1)" >Multiple forward</text>
+<text x="0" y="551" font-family="Comic Sans MS, cursive" font-size="40" font-weight="700" fill="#062d3e" transform="translate(843 0) scale(0.953125 1)" >Multiple forward</text>
 </g><g id="video-diffusion-forward">
-<text x="0" y="653" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#062d3e" transform="translate(871 0) scale(0.935065 1)" >Past KV</text>
+<text x="0" y="653" font-family="Comic Sans MS, cursive" font-size="21" font-weight="400" fill="#062d3e" transform="translate(871 0) scale(0.960000 1)" >Past KV</text>
 <g id="past-kv-video" transform="translate(957 610) scale(1)">
 <path d="M18 20 H51 V78 H18Z" fill="#4e999f" fill-opacity=".29"/>
 <use href="#kv-layer" y="52"/>
@@ -1646,15 +1646,15 @@
 <use href="#kv-top"/>
 </g>
 <path id="video-past-kv-to-denoiser" d="M1040 646 C1075 646 1083 644 1083 669 V737" fill="none" stroke="#528b99" stroke-width="2.1" marker-end="url(#tealArrow)"/>
-<text x="0" y="736" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#062d3e" transform="translate(818 0) scale(0.953271 1)" >Noisy input</text>
+<text x="0" y="736" font-family="Comic Sans MS, cursive" font-size="21" font-weight="400" fill="#062d3e" transform="translate(818 0) scale(0.927273 1)" >Noisy input</text>
 <rect x="823" y="748" width="87" height="89" rx="4" fill="url(#noisePattern)"/>
 <path id="video-noise-to-denoiser" d="M915 792 H954" fill="none" stroke="#123f52" stroke-width="2.5" marker-end="url(#navyArrow)"/>
 <rect id="video-denoiser-module" x="958" y="743" width="192" height="93" rx="13" fill="url(#moduleGradient)" stroke="#2d616b" stroke-width="1.5"/>
-<text x="986" y="801" font-family="Georgia, Times New Roman, serif" font-size="35" font-weight="400" fill="#ffffff" font-style="italic">D<tspan baseline-shift="sub" font-size="22">θ</tspan></text>
-<text x="1037" y="801" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="400" fill="#ffffff" >·</text>
-<text x="0" y="799" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#ffffff" transform="translate(1052 0) scale(0.900000 1)" >Denoise</text>
+<text x="986" y="801" font-family="Comic Sans MS, cursive" font-size="35" font-weight="400" fill="#ffffff" font-style="italic">D<tspan baseline-shift="sub" font-size="22">θ</tspan></text>
+<text x="1037" y="801" font-family="Comic Sans MS, cursive" font-size="28" font-weight="400" fill="#ffffff" >·</text>
+<text x="0" y="799" font-family="Comic Sans MS, cursive" font-size="22" font-weight="400" fill="#ffffff" transform="translate(1052 0) scale(0.888889 1)" >Denoise</text>
 <path id="video-denoiser-to-frame" d="M1153 792 H1189" fill="none" stroke="#123f52" stroke-width="2.4" marker-end="url(#navyArrow)"/>
-<text x="0" y="715" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#062d3e" transform="translate(1175 0) scale(0.882716 1)" >Generated frame</text>
+<text x="0" y="715" font-family="Comic Sans MS, cursive" font-size="21" font-weight="400" fill="#062d3e" transform="translate(1175 0) scale(0.841176 1)" >Generated frame</text>
 <g id="generated-landscape" clip-path="url(#photoClip)" transform="translate(1193 730)">
 <path d="M0 0 C32.01 0 64.02 0 97 0 C97 33.99 97 67.98 97 103 C64.99 103 32.98 103 0 103 C0 69.01 0 35.02 0 0 Z " fill="#4C4A43" transform="translate(0,0)"/>
 <path d="M0 0 C32.01 0 64.02 0 97 0 C97 12.87 97 25.74 97 39 C78.51 50.38 78.51 50.38 74.19 50.19 C73.4 50.16 72.61 50.13 71.79 50.11 C71.2 50.07 70.61 50.04 70 50 C69.67 51.32 69.34 52.64 69 54 C68.5 53.84 68.5 53.84 66 53 C63.51 52.85 61.06 52.77 58.56 52.75 C57.89 52.73 57.23 52.71 56.54 52.69 C52.22 52.65 50.44 53.25 47 56 C43.81 55.76 41.76 54.32 39.25 52.44 C38.64 51.98 38.02 51.53 37.39 51.06 C37.16 50.88 37.16 50.88 36 50 C36 50.66 36 51.32 36 52 C33.13 52.12 33.13 52.12 30 52 C29.34 51.34 28.68 50.68 28 50 C28.38 47.38 28.38 47.38 29 45 C28.34 45 27.68 45 27 45 C27 45.66 27 46.32 27 47 C26.34 47 25.68 47 25 47 C25 46.01 25 45.02 25 44 C24.03 43.71 23.06 43.42 22.06 43.12 C19 42 19 42 18 40 C15.52 39.55 13.12 39.2 10.62 38.94 C9.26 38.78 7.9 38.63 6.54 38.46 C5.93 38.4 5.33 38.33 4.7 38.27 C3 38 3 38 0 37 C0 24.79 0 12.58 0 0 Z " fill="#99B7CC" transform="translate(0,0)"/>
@@ -1904,11 +1904,11 @@
 </g>
 <path id="video-frame-to-kv-writer" d="M1295 792 H1328" fill="none" stroke="#123f52" stroke-width="2.4" marker-end="url(#navyArrow)"/>
 <rect id="video-kv-writer-module" x="1334" y="743" width="164" height="90" rx="13" fill="url(#moduleGradient2)" stroke="#315e6d" stroke-width="1.5"/>
-<text x="1355" y="801" font-family="Georgia, Times New Roman, serif" font-size="35" font-weight="400" fill="#ffffff" font-style="italic">D<tspan baseline-shift="sub" font-size="22">θ</tspan></text>
-<text x="1401" y="801" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="400" fill="#ffffff" >·</text>
-<text x="0" y="799" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#ffffff" transform="translate(1414 0) scale(0.857143 1)" >Write KV</text>
+<text x="1355" y="801" font-family="Comic Sans MS, cursive" font-size="35" font-weight="400" fill="#ffffff" font-style="italic">D<tspan baseline-shift="sub" font-size="22">θ</tspan></text>
+<text x="1401" y="801" font-family="Comic Sans MS, cursive" font-size="28" font-weight="400" fill="#ffffff" >·</text>
+<text x="0" y="799" font-family="Comic Sans MS, cursive" font-size="21" font-weight="400" fill="#ffffff" transform="translate(1414 0) scale(0.774194 1)" >Write KV</text>
 <path id="video-writer-to-new-kv" d="M1503 792 H1543" fill="none" stroke="#123f52" stroke-width="2.4" marker-end="url(#navyArrow)"/>
-<text x="0" y="723" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#062d3e" transform="translate(1556 0) scale(0.921053 1)" >New KV</text>
+<text x="0" y="723" font-family="Comic Sans MS, cursive" font-size="21" font-weight="400" fill="#062d3e" transform="translate(1556 0) scale(0.921053 1)" >New KV</text>
 <g id="new-kv-video" transform="translate(1550 743) scale(1.07)">
 <path d="M18 20 H51 V78 H18Z" fill="#4e999f" fill-opacity=".29"/>
 <use href="#kv-layer" y="52"/>
@@ -1919,6 +1919,6 @@
 <use href="#kv-top"/>
 </g>
 <g id="diffusion-time-tags"><path d="M1055 836V846 M1418 833V846" stroke="#ecd7b2" stroke-width="1.7"/><rect x="995" y="845" width="120" height="40" rx="10" fill="url(#tagGold)"/><rect x="1360" y="845" width="119" height="40" rx="10" fill="url(#tagGold)"/></g>
-<text x="0" y="874" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" fill="#062d3e" transform="translate(1030 0) scale(0.909091 1)" ><tspan font-family="Georgia, Times New Roman, serif" font-style="italic">t</tspan> &gt; 0</text>
-<text x="0" y="874" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" fill="#062d3e" transform="translate(1382 0) scale(0.923077 1)" ><tspan font-family="Georgia, Times New Roman, serif" font-style="italic">t<tspan baseline-shift="sub" font-size="20">ctx</tspan></tspan> = 0</text>
+<text x="0" y="871" font-family="Comic Sans MS, cursive" font-size="27" font-weight="400" fill="#062d3e" transform="translate(1030 0) scale(0.909091 1)" ><tspan font-family="Comic Sans MS, cursive" font-style="italic">t</tspan> &gt; 0</text>
+<text x="0" y="871" font-family="Comic Sans MS, cursive" font-size="27" font-weight="400" fill="#062d3e" transform="translate(1382 0) scale(0.923077 1)" ><tspan font-family="Comic Sans MS, cursive" font-style="italic">t<tspan dy="4" font-size="18">ctx</tspan></tspan><tspan dy="-4"> = 0</tspan></text>
 </g></svg>
