@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Streaming Video Generation: Past and Future</title>
-<link rel="alternate" hreflang="zh-Hans" href="index.html"><link rel="alternate" hreflang="en" href="en.html">
+<link rel="alternate" hreflang="zh-Hans" href="zh.html"><link rel="alternate" hreflang="en" href="index.html">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Source+Sans+3:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
 <link rel="stylesheet" href="css/blog.css"><link rel="stylesheet" href="blog.css?v=deployment-layout-20261020">
@@ -12,7 +12,7 @@
 <li><a href="#toward-infinite-video-extrapolation">Toward Infinite Video Extrapolation</a></li>
 <li><a href="#references">References</a></li>
 <li><a href="#cite">Cite</a></li></ol></nav><main class="page">
-<header class="mast"><p class="date">October 20, 2026</p><nav class="lang" aria-label="Language"><a class="" href="index.html" lang="zh-Hans" hreflang="zh-Hans">中文</a><a class="on" href="en.html" lang="en" hreflang="en">English</a></nav></header>
+<header class="mast"><p class="date">October 20, 2026</p><nav class="lang" aria-label="Language"><a class="" href="zh.html" lang="zh-Hans" hreflang="zh-Hans">中文</a><a class="on" href="index.html" lang="en" hreflang="en">English</a></nav></header>
 <article><h1 id="top">Streaming Video Generation: Past and Future</h1><p class="byline">Zihan Su, Junhao Zhuang, Weiyang Jin, Zeyue Xue</p><h2 id="from-video-generation-to-real-time-interaction">From Video Generation to Real-Time Interaction</h2>
 <p>In real-time interactive video generation, what appears next is determined progressively by user input. When the user changes the camera direction, the model needs to generate a new view; when the user changes the prompt, subsequent frames need to respond with new content. As long as the interaction continues, generation needs to continue. This requires the model to generate the next step promptly from the existing video and new input.</p>
 <p>CausVid <a class="cite" href="#ref-10">10</a> is an important starting point for this direction. Bidirectional video diffusion jointly denoises an entire video, allowing the current frame to draw on future information. Causal generation unfolds computation over time, using the past to generate the present. CausVid distills the capabilities of a bidirectional teacher into a few-step causal student and reuses historical computation through a KV cache, bringing high-quality video models toward streaming output.</p>
