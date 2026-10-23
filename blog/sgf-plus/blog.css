@@ -145,3 +145,5 @@ html[lang="en"] .quote-translation-content p {
   .closing-quote { padding: 1rem; }
   .quote-translation summary { width: 34px; height: 34px; }
 }
+
+.byline .equal-contribution { font-size: 0.85em; }

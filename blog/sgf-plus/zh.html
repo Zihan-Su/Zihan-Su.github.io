@@ -13,7 +13,7 @@
 <li><a href="#references">参考文献</a></li>
 <li><a href="#cite">引用</a></li></ol></nav><main class="page">
 <header class="mast"><p class="date">2026年10月20日</p><nav class="lang" aria-label="语言"><a class="on" href="zh.html" lang="zh-Hans" hreflang="zh-Hans">中文</a><a class="" href="index.html" lang="en" hreflang="en">English</a></nav></header>
-<article><h1 id="top">流式视频生成：过去与未来</h1><p class="byline">Zihan Su, Junhao Zhuang, Weiyang Jin, Zeyue Xue</p><h2 id="从视频生成到实时交互">从视频生成到实时交互</h2>
+<article><h1 id="top">流式视频生成：过去与未来</h1><p class="byline">Zihan Su<sup>*</sup>, Junhao Zhuang<sup>*</sup>, Weiyang Jin, Zeyue Xue<br><span class="equal-contribution">* Equal contribution.</span></p><h2 id="从视频生成到实时交互">从视频生成到实时交互</h2>
 <p>在实时交互视频生成中，接下来的画面随着用户输入逐步确定。用户调整镜头方向，模型需要生成新的视角；用户改变提示词，后续画面需要响应新的内容。只要交互还在继续，生成就需要继续。这要求模型根据已有画面和新的输入，及时生成下一步。</p>
 <p>CausVid <a class="cite" href="#ref-10">10</a> 是这条路线的重要起点之一。双向视频扩散在整段视频上联合去噪，当前画面可以借助未来信息；因果生成则把计算沿时间展开，让模型依靠过去生成当前。CausVid 将双向教师的能力蒸馏到少步因果学生中，并通过 KV cache 复用历史计算，把高质量视频模型带向流式输出。</p>
 <p>将视频生成沿时间展开之后，模型需要反复根据已有内容预测下一步。这个过程与语言模型的自回归生成相似，但两者存在两个重要区别：<strong>生成内容所在的空间，以及每一步推理的计算方式。</strong></p>
@@ -159,5 +159,5 @@ s &amp;= \frac{\langle g_{\mathrm{context}},g_{\mathrm{denoise}}\rangle}{\|g_{\m
 }</code></pre></div>
 </article>
 <footer class="credit">版式参考了 <a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Thinking Machines Lab</a> 的研究笔记，谨此致谢。</footer>
-</main></div><script defer src="vendor/katex/katex.min.js"></script><script defer src="vendor/katex/auto-render.min.js"></script><script defer src="js/math.js"></script><script defer src="ui.js?v=deployment-20261020"></script><script data-goatcounter="https://sugewud.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</main></div><script defer src="vendor/katex/katex.min.js"></script><script defer src="vendor/katex/auto-render.min.js"></script><script defer src="js/math.js"></script><script defer src="ui.js?v=9632443869"></script><script data-goatcounter="https://sugewud.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body></html>
